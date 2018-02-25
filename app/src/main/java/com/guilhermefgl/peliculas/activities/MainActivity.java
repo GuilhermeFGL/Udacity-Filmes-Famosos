@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import com.guilhermefgl.peliculas.R;
 
+import butterknife.ButterKnife;
+
 public class MainActivity extends BaseActivity {
 
     public static void startActivity(Context context) {
@@ -16,5 +18,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
     }
+
 }
