@@ -7,14 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.guilhermefgl.peliculas.R;
+import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,6 +146,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         RatingBar itemAverageRB;
         @BindView(R.id.item_movie_thumbnail)
         ImageView itemThumbnailIV;
+        @BindView(R.id.item_movie_progress_bar)
+        ProgressBar loadingPB;
 
         MovieViewHolder(View itemView) {
             super(itemView);
@@ -154,9 +157,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         void bind(Movie movie) {
             itemTitleTV.setText(movie.getTitle());
             itemAverageRB.setRating((float) (movie.getVoteAverage() / 10));
-            Picasso.with(context)
-                    .load(TheMovieDBService.IMAGE_BASE_URL.concat(movie.getPosterPath()))
-                    .into(itemThumbnailIV);
+            PicassoHelper.loadImage(context,
+                    TheMovieDBService.buildImageURL(movie.getPosterPath()),
+                    itemThumbnailIV, loadingPB);
         }
     }
 }

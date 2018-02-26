@@ -22,7 +22,7 @@ import retrofit2.http.Query;
 
 public class TheMovieDBService {
 
-    public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
 
     private static OkHttpClient httpClient;
     private static Gson gson;
@@ -56,6 +56,11 @@ public class TheMovieDBService {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
                 .create(TheMovieDBClient.class);
+    }
+
+    @NonNull
+    public static String buildImageURL(String movieId) {
+        return TheMovieDBService.IMAGE_BASE_URL.concat(movieId);
     }
 
     public interface TheMovieDBClient {
