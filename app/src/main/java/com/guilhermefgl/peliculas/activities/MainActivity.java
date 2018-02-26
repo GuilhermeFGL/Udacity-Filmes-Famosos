@@ -10,11 +10,8 @@ import android.support.v7.widget.RecyclerView;
 
 import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.adapters.MovieAdapter;
-import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,7 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMoreListener {
 
     @BindView(R.id.main_swipe)
     SwipeRefreshLayout mainSR;
@@ -41,39 +38,41 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
-        mainRV.setLayoutManager(new GridLayoutManager(this,2));
+        mainRV.setLayoutManager(new GridLayoutManager(this, 2));
+        movieAdapter = new MovieAdapter(this, mainRV, this);
         mainRV.setAdapter(movieAdapter);
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
         mainSR.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestMovies();
+                requestMovies(1);
             }
         });
 
-        requestMovies();
+        requestMovies(1);
     }
 
-    private void startRequest() {
-
+    @Override
+    public void onLoadMore() {
+        movieAdapter.insertLoading();
+        requestMovies(movieAdapter.getNextPage());
     }
 
     private void endRequest() {
         mainSR.setRefreshing(false);
+        movieAdapter.setFinishLoading();
     }
 
-    private void requestMovies() {
-        startRequest();
-        TheMovieDBService.getClient().listPopular().enqueue(new Callback<MovieResponse>() {
+    private void requestMovies(int page) {
+        TheMovieDBService.getClient().listPopular(page).enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieResponse> call,
                                    @NonNull Response<MovieResponse> response) {
                 endRequest();
-                if(response.isSuccessful() && response.body() != null) {
-                    movieAdapter.updateAdapter(response.body().getResults());
+                movieAdapter.removeLoading();
+                if (response.isSuccessful() && response.body() != null) {
+                    movieAdapter.insertItens(response.body());
                 }
-
             }
 
             @Override
@@ -81,7 +80,5 @@ public class MainActivity extends BaseActivity {
                 endRequest();
             }
         });
-
     }
-
 }

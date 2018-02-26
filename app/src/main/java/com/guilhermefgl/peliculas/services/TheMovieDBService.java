@@ -1,6 +1,5 @@
 package com.guilhermefgl.peliculas.services;
 
-
 import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -19,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public class TheMovieDBService {
 
@@ -61,11 +61,9 @@ public class TheMovieDBService {
     public interface TheMovieDBClient {
 
         @GET("popular")
-        Call<MovieResponse> listPopular();
+        Call<MovieResponse> listPopular(@Query("page") int page);
 
         @GET("top_rated")
-        Call<MovieResponse> listTopRated();
-
+        Call<MovieResponse> listTopRated(@Query("page") int page);
     }
-
 }

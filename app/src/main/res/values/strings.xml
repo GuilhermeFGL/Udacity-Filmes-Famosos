@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Peliculas</string>
+
+    <!-- MAIN ACTIVITY -->
     <string name="item_movie_thumbnail">movie thumbnail</string>
+    <string name="item_movie_loading">Loading more movies…</string>
+
+
 </resources>
