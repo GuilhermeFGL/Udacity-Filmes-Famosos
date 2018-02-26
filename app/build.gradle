@@ -22,8 +22,14 @@ android {
 
     flavorDimensions 'peliculas'
     productFlavors {
+        development {
+            dimension 'peliculas'
+            buildConfigField 'Boolean', 'LOGGER_ENABLED', 'true'
+            buildConfigField 'String', 'API_KEY', project.api_key
+        }
         production {
             dimension 'peliculas'
+            buildConfigField 'Boolean', 'LOGGER_ENABLED', 'false'
             buildConfigField 'String', 'API_KEY', project.api_key
         }
     }
@@ -42,7 +48,7 @@ dependencies {
     implementation 'com.squareup.okhttp:okhttp:2.4.0'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.1'
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 

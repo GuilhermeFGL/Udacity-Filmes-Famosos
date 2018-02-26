@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">Peliculas</string>
 
+    <!-- GERAL -->
+    <string name="error_connection_label">There is no Internet connection</string>
+    <string name="error_connection_action">try again</string>
+
     <!-- MAIN ACTIVITY -->
     <string name="item_movie_thumbnail">movie thumbnail</string>
     <string name="item_movie_loading">Loading more movies…</string>
-
 
 </resources>

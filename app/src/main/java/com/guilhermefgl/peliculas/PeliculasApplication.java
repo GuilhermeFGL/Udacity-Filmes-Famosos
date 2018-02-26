@@ -17,7 +17,7 @@ public class PeliculasApplication extends Application {
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttpDownloader(this, Integer.MAX_VALUE));
         Picasso built = builder.build();
-        built.setLoggingEnabled(true);
+        built.setLoggingEnabled(BuildConfig.LOGGER_ENABLED);
         Picasso.setSingletonInstance(built);
     }
 }

@@ -62,10 +62,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
                 if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)
                         && currentPage < maxPages) {
+                    isLoading = true;
                     if (listiner != null) {
                         listiner.onLoadMore();
                     }
-                    isLoading = true;
                 }
             }
         });
@@ -109,13 +109,19 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public void insertItens(MovieResponse movieResponse) {
         currentPage = movieResponse.getPage();
         maxPages = movieResponse.getTotalPages();
-        movieList.addAll(movieResponse.getResults());
+        if (movieResponse.getPage() == 1) {
+            movieList = movieResponse.getResults();
+        } else {
+            movieList.addAll(movieResponse.getResults());
+        }
         notifyDataSetChanged();
     }
 
     public void insertLoading() {
-        movieList.add(null);
-        notifyItemInserted(movieList.size() - 1);
+        if (movieList.get(movieList.size() - 1) != null) {
+            movieList.add(null);
+            notifyItemInserted(movieList.size() - 1);
+        }
     }
 
     public void removeLoading() {
@@ -126,7 +132,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     public void setFinishLoading() {
-        this.isLoading = false;
+        isLoading = false;
     }
 
     public interface OnLoadMoreListener {
