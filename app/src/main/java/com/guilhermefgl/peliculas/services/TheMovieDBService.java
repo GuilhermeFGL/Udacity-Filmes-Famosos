@@ -22,6 +22,8 @@ import retrofit2.http.GET;
 
 public class TheMovieDBService {
 
+    public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+
     private static OkHttpClient httpClient;
     private static Gson gson;
 
