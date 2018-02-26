@@ -32,14 +32,27 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private int visibleThreshold = 4;
     private int lastVisibleItem, totalItemCount;
 
-    private final int VIEW_TYPE_ITEM = 0;
-    private final int VIEW_TYPE_LOADING = 1;
+    private static final int VIEW_TYPE_ITEM = 0;
+    private static final int VIEW_TYPE_LOADING = 1;
 
     public MovieAdapter(Context context, RecyclerView recyclerView, final OnLoadMoreListener listiner) {
         this.context = context;
         this.movieList = new ArrayList<>();
 
         final GridLayoutManager gridLayoutManager = (GridLayoutManager)recyclerView.getLayoutManager();
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch(getItemViewType(position)){
+                    case MovieAdapter.VIEW_TYPE_LOADING:
+                        return 2;
+                    case MovieAdapter.VIEW_TYPE_ITEM:
+                        return 1;
+                    default:
+                        return -1;
+                }
+            }
+        });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

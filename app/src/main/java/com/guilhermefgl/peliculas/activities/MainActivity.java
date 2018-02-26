@@ -67,10 +67,11 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
         TheMovieDBService.getClient().listPopular(page).enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieResponse> call,
-                                   @NonNull Response<MovieResponse> response) {
+                                   @NonNull final Response<MovieResponse> response) {
+
                 endRequest();
                 movieAdapter.removeLoading();
-                if (response.isSuccessful() && response.body() != null) {
+                if(response.isSuccessful() && response.body() != null) {
                     movieAdapter.insertItens(response.body());
                 }
             }
