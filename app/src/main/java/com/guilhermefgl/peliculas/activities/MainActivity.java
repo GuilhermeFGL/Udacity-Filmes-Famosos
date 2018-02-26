@@ -8,6 +8,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -38,6 +40,7 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
     LinearLayout errorConnectionLL;
 
     private MovieAdapter movieAdapter;
+    private int currentOrder;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, MainActivity.class));
@@ -60,7 +63,24 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
                 requestMovies(1);
             }
         });
+
+        currentOrder = R.id.menu_main_popular;
         requestMovies(1);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_main_popular
+                || item.getItemId() == R.id.menu_main_top_rated) {
+            requestMoviesBy(item);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -94,9 +114,23 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
         }
     }
 
+    private void requestMoviesBy(MenuItem order) {
+        currentOrder = order.getItemId();
+        toolbar.setTitle(order.getTitle());
+        requestMovies(1);
+    }
+
     private void requestMovies(int page) {
         startRequest();
-        TheMovieDBService.getClient().listPopular(page).enqueue(new Callback<MovieResponse>() {
+
+        Call<MovieResponse> request;
+        if (currentOrder == R.id.menu_main_popular) {
+            request = TheMovieDBService.getClient().listPopular(page);
+        } else {
+            request = TheMovieDBService.getClient().listTopRated(page);
+        }
+
+        request.enqueue(new Callback<MovieResponse>() {
             @Override
             public void onResponse(@NonNull Call<MovieResponse> call,
                                    @NonNull final Response<MovieResponse> response) {

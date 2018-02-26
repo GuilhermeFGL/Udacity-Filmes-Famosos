@@ -8,5 +8,8 @@
     <!-- MAIN ACTIVITY -->
     <string name="item_movie_thumbnail">movie thumbnail</string>
     <string name="item_movie_loading">Loading more movies…</string>
+    <string name="menu_main_order">order options</string>
+    <string name="menu_main_popular">Popular</string>
+    <string name="menu_main_top_rated">Top Rated</string>
 
 </resources>
