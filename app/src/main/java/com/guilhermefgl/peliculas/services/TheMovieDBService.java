@@ -18,11 +18,14 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class TheMovieDBService {
 
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    public static final String ORDER_POPULAR = "popular";
+    public static final String ORDER_TOP_RATED = "top_rated";
 
     private static OkHttpClient httpClient;
     private static Gson gson;
@@ -65,10 +68,7 @@ public class TheMovieDBService {
 
     public interface TheMovieDBClient {
 
-        @GET("popular")
-        Call<MovieResponse> listPopular(@Query("page") int page);
-
-        @GET("top_rated")
-        Call<MovieResponse> listTopRated(@Query("page") int page);
+        @GET("{order}")
+        Call<MovieResponse> list(@Path("order") String order, @Query("page") int page);
     }
 }

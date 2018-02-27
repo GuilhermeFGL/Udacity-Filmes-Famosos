@@ -1,7 +1,7 @@
 package com.guilhermefgl.peliculas.activities;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -42,8 +42,10 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
     private MovieAdapter movieAdapter;
     private int currentOrder;
 
-    public static void startActivity(Context context) {
-        context.startActivity(new Intent(context, MainActivity.class));
+    public static void startActivity(BaseActivity activity) {
+        activity.startActivity(
+                new Intent(activity, MainActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
     @Override
@@ -53,8 +55,10 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        mainRV.setLayoutManager(new GridLayoutManager(this, 2));
-        movieAdapter = new MovieAdapter(this, mainRV, this);
+        int spanCount = getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
+        mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
+        movieAdapter = new MovieAdapter(this, mainRV, this, spanCount);
         mainRV.setAdapter(movieAdapter);
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
         mainSR.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -122,33 +126,28 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
 
     private void requestMovies(int page) {
         startRequest();
+        String order = currentOrder == R.id.menu_main_popular ?
+                TheMovieDBService.ORDER_POPULAR : TheMovieDBService.ORDER_TOP_RATED;
+        TheMovieDBService.getClient().list(order, page).enqueue(
+                new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<MovieResponse> call,
+                                           @NonNull final Response<MovieResponse> response) {
+                        movieAdapter.removeLoading();
+                        if(response.isSuccessful() && response.body() != null) {
+                            movieAdapter.insertItens(response.body());
+                            setErrorLayout(false);
+                        } else {
+                            setErrorLayout(true);
+                        }
+                        endRequest();
+                    }
 
-        Call<MovieResponse> request;
-        if (currentOrder == R.id.menu_main_popular) {
-            request = TheMovieDBService.getClient().listPopular(page);
-        } else {
-            request = TheMovieDBService.getClient().listTopRated(page);
-        }
-
-        request.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MovieResponse> call,
-                                   @NonNull final Response<MovieResponse> response) {
-                movieAdapter.removeLoading();
-                if(response.isSuccessful() && response.body() != null) {
-                    movieAdapter.insertItens(response.body());
-                    setErrorLayout(false);
-                } else {
-                    setErrorLayout(true);
-                }
-                endRequest();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
-                endRequest();
-                setErrorLayout(true);
-            }
-        });
+                    @Override
+                    public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
+                        endRequest();
+                        setErrorLayout(true);
+                    }
+                });
     }
 }

@@ -28,6 +28,7 @@
 
     <style name="SplashTheme" parent="AppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/screen_splash</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="FlatButton" parent="Widget.AppCompat.Button.Borderless">

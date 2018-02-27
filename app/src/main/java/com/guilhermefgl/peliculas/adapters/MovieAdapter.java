@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -36,7 +35,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public MovieAdapter(Context context, RecyclerView recyclerView, final OnLoadMoreListener listiner) {
+    public MovieAdapter(Context context, RecyclerView recyclerView,
+                        final OnLoadMoreListener listiner, final int spanCount) {
         this.context = context;
         this.movieList = new ArrayList<>();
 
@@ -45,10 +45,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             @Override
             public int getSpanSize(int position) {
                 switch(getItemViewType(position)){
-                    case MovieAdapter.VIEW_TYPE_LOADING:
-                        return 2;
                     case MovieAdapter.VIEW_TYPE_ITEM:
                         return 1;
+                    case MovieAdapter.VIEW_TYPE_LOADING:
+                        return spanCount;
                     default:
                         return -1;
                 }
@@ -152,8 +152,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         RatingBar itemAverageRB;
         @BindView(R.id.item_movie_thumbnail)
         ImageView itemThumbnailIV;
-        @BindView(R.id.item_movie_progress_bar)
-        ProgressBar loadingPB;
 
         MovieViewHolder(View itemView) {
             super(itemView);
@@ -165,7 +163,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             itemAverageRB.setRating((float) (movie.getVoteAverage() / 10));
             PicassoHelper.loadImage(context,
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                    itemThumbnailIV, loadingPB);
+                    itemThumbnailIV);
         }
     }
 }
