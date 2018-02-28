@@ -23,13 +23,14 @@ import retrofit2.http.Query;
 
 public class TheMovieDBService {
 
+    private static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    private static final String DATE_FORMMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
     public static final String ORDER_TOP_RATED = "top_rated";
 
-    private static OkHttpClient httpClient;
-    private static Gson gson;
-
+    private static final OkHttpClient httpClient;
+    private static final Gson gson;
     static { httpClient = new OkHttpClient.Builder()
             .addInterceptor(new Interceptor() {
                 @Override
@@ -43,10 +44,9 @@ public class TheMovieDBService {
                 }
             }).build();
     }
-
     static {
          gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd")
+                .setDateFormat(DATE_FORMMAT)
                 .create();
     }
 
@@ -54,7 +54,7 @@ public class TheMovieDBService {
 
     public static TheMovieDBClient getClient() {
         return new Retrofit.Builder()
-                .baseUrl("http://api.themoviedb.org/3/movie/")
+                .baseUrl(BASE_URL)
                 .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()

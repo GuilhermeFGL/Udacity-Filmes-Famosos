@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
+@SuppressWarnings("unused")
 public class Movie implements Parcelable{
 
     private String title;
@@ -148,7 +149,7 @@ public class Movie implements Parcelable{
         language = in.readString();
     }
 
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
         }

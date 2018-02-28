@@ -1,6 +1,5 @@
 package com.guilhermefgl.peliculas.adapters;
 
-import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,7 +26,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private Integer currentPage, maxPages;
 
     private boolean isLoading;
-    private int visibleThreshold = 4;
+    private final int VISIBLE_THRESHOLD = 4;
     private int lastVisibleItem, totalItemCount;
 
     private static final int VIEW_TYPE_ITEM = 0;
@@ -56,7 +55,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 super.onScrolled(recyclerView, dx, dy);
                 totalItemCount = gridLayoutManager.getItemCount();
                 lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
-                if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)
+                if (!isLoading && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)
                         && currentPage < maxPages) {
                     isLoading = true;
                     if (listiner != null) {
@@ -158,7 +157,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         @BindView(R.id.item_movie_thumbnail)
         ImageView itemThumbnailIV;
 
-        private View view;
+        private final View view;
 
         MovieViewHolder(View itemView) {
             super(itemView);
