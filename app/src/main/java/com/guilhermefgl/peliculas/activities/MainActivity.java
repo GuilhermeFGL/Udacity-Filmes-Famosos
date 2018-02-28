@@ -44,9 +44,10 @@ public class MainActivity extends BaseActivity
 
     private MovieAdapter movieAdapter;
     private Snackbar errorSB;
-    private int currentOrder;
+    private Integer currentOrder;
 
     private final String STATE_MOVIES = MovieResponse.class.getName();
+    private final String STATE_ORDER = MenuItem.class.getName();
 
     public static void startActivity(BaseActivity activity) {
         activity.startActivity(
@@ -89,6 +90,10 @@ public class MainActivity extends BaseActivity
         }
         else {
             movieAdapter.insertItens((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
+            if (savedInstanceState.containsKey(STATE_ORDER)) {
+                int orderState = savedInstanceState.getInt(STATE_ORDER);
+                currentOrder = orderState > 0 ? orderState : R.id.menu_main_popular;
+            }
         }
     }
 
@@ -116,6 +121,7 @@ public class MainActivity extends BaseActivity
             setPage(movieAdapter.getCurrentPage());
             setTotalPages(movieAdapter.getNextPage());
         }});
+        bundle.putInt(STATE_ORDER, currentOrder != null ? currentOrder : -1);
         super.onSaveInstanceState(bundle);
     }
 
