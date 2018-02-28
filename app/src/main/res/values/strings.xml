@@ -12,4 +12,19 @@
     <string name="menu_main_popular">Popular</string>
     <string name="menu_main_top_rated">Top Rated</string>
 
+    <!-- DETAILS ACTIVITY -->
+    <string name="details_image_desc">movie poster</string>
+    <string name="details_adult_label">adult</string>
+    <string name="details_views_desc">movie views</string>
+    <string name="details_date_label">Release date:</string>
+    <string name="details_overview_label">Overview:</string>
+
+    <string name="lore">
+        Lorem ipsum dolor sit amet, duo viderer maluisset definitionem ne, id malis elaboraret pri. Ea eum posse clita. Et nostrum omittam ius, no oratio tollit accusata vix, et fugit affert regione vel. Quas natum dicat ex sed, mei at omittantur suscipiantur. Suas labitur mel ea.
+        Cu quando indoctum has. No per meis quaerendum, no his erant viderer blandit, mei ad inani simul noster. Veri fugit pertinax ex sit, illum prompta senserit ne pri. Lorem erroribus ad vix, nam ne labore luptatum, pro elit minim suavitate eu.
+        Dicunt mediocritatem ius ea. Ut legimus intellegebat per, delicata interesset te mea. Te stet vitae nominati sit, mel et altera patrioque sadipscing. Ut malis iudico erroribus vim, cum ei error prodesset. Cu vivendo mnesarchum quo, cu sea verear voluptatibus.
+        Vix te brute graeco. Ea usu erat dicit definitiones. Cum velit erant ne. Ex quem summo patrioque nec, ad vis ludus latine scripserit. Vitae conclusionemque est ut, has id nusquam periculis appellantur. Quo no modo habeo virtute, elit tantas sententiae sed ex. Nulla complectitur vim an, augue tollit id vis.
+        Saepe option fastidii mel ei, his no homero fastidii, te ferri pertinax sea. Et per sumo consequuntur vituperatoribus, te idque pericula consulatu nam. Aliquam labores docendi an mel, iisque pertinax forensibus eu has, ut ferri illum docendi ius. Ad ludus saepe consetetur sed. Graece latine commune quo ea, sit vidit quodsi et, pro ei veri justo scriptorem.
+    </string>
+
 </resources>

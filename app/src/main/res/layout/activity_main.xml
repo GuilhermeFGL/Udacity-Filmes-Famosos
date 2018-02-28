@@ -50,8 +50,7 @@
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <include
-            layout="@layout/layout_error_connection" />
+        <include layout="@layout/layout_error_connection" />
 
     </RelativeLayout>
 
