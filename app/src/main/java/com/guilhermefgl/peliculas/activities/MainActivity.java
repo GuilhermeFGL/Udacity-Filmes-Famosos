@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.adapters.MovieAdapter;
@@ -26,7 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMoreListener {
+public class MainActivity extends BaseActivity
+        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -40,6 +43,7 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
     LinearLayout errorConnectionLL;
 
     private MovieAdapter movieAdapter;
+    private Snackbar errorSB;
     private int currentOrder;
 
     public static void startActivity(BaseActivity activity) {
@@ -60,6 +64,7 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
         mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
         movieAdapter = new MovieAdapter(this, mainRV, this, spanCount);
         mainRV.setAdapter(movieAdapter);
+
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
         mainSR.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -67,6 +72,14 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
                 requestMovies(1);
             }
         });
+
+        errorSB = Snackbar.make(
+                findViewById(R.id.main_layout),
+                R.string.error_connection_label,
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.error_connection_action, this);
+        ((TextView) errorSB.getView().findViewById(android.support.design.R.id.snackbar_text))
+                .setTextColor(getResources().getColor(R.color.primary_light));
 
         currentOrder = R.id.menu_main_popular;
         requestMovies(1);
@@ -82,7 +95,9 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_main_popular
                 || item.getItemId() == R.id.menu_main_top_rated) {
-            requestMoviesBy(item);
+            currentOrder = item.getItemId();
+            toolbar.setTitle(item.getTitle());
+            requestMovies(1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -91,6 +106,11 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
     public void onLoadMore() {
         movieAdapter.insertLoading();
         requestMovies(movieAdapter.getNextPage());
+    }
+
+    @Override
+    public void onClick(View v) {
+        actionRetry();
     }
 
     @OnClick(R.id.error_conection_action)
@@ -110,18 +130,19 @@ public class MainActivity extends BaseActivity implements MovieAdapter.OnLoadMor
 
     private void setErrorLayout(boolean hasError) {
         if (hasError) {
-            errorConnectionLL.setVisibility(View.VISIBLE);
-            mainRV.setVisibility(View.GONE);
+            if (movieAdapter.getItemCount() > 0) {
+                errorSB.show();
+            } else {
+                errorConnectionLL.setVisibility(View.VISIBLE);
+                mainRV.setVisibility(View.GONE);
+            }
         } else {
             errorConnectionLL.setVisibility(View.GONE);
             mainRV.setVisibility(View.VISIBLE);
+            if (errorSB.isShown()) {
+                errorSB.dismiss();
+            }
         }
-    }
-
-    private void requestMoviesBy(MenuItem order) {
-        currentOrder = order.getItemId();
-        toolbar.setTitle(order.getTitle());
-        requestMovies(1);
     }
 
     private void requestMovies(int page) {
