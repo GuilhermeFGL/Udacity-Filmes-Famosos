@@ -46,6 +46,8 @@ public class MainActivity extends BaseActivity
     private Snackbar errorSB;
     private int currentOrder;
 
+    private final String STATE_MOVIES = MovieResponse.class.getName();
+
     public static void startActivity(BaseActivity activity) {
         activity.startActivity(
                 new Intent(activity, MainActivity.class)
@@ -62,7 +64,7 @@ public class MainActivity extends BaseActivity
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
         mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
-        movieAdapter = new MovieAdapter(this, mainRV, this, spanCount);
+        movieAdapter = new MovieAdapter(mainRV, this, spanCount);
         mainRV.setAdapter(movieAdapter);
 
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
@@ -81,8 +83,13 @@ public class MainActivity extends BaseActivity
         ((TextView) errorSB.getView().findViewById(android.support.design.R.id.snackbar_text))
                 .setTextColor(getResources().getColor(R.color.primary_light));
 
-        currentOrder = R.id.menu_main_popular;
-        requestMovies(1);
+        if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_MOVIES)) {
+            currentOrder = R.id.menu_main_popular;
+            requestMovies(1);
+        }
+        else {
+            movieAdapter.insertItens((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
+        }
     }
 
     @Override
@@ -100,6 +107,16 @@ public class MainActivity extends BaseActivity
             requestMovies(1);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putParcelable(STATE_MOVIES, new MovieResponse(){{
+            setResults(movieAdapter.getItens());
+            setPage(movieAdapter.getCurrentPage());
+            setTotalPages(movieAdapter.getNextPage());
+        }});
+        super.onSaveInstanceState(bundle);
     }
 
     @Override

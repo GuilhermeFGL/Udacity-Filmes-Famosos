@@ -1,6 +1,6 @@
 package com.guilhermefgl.peliculas.adapters;
 
-import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,15 +17,13 @@ import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private Context context;
-    private List<Movie> movieList;
+    private ArrayList<Movie> movieList;
     private Integer currentPage, maxPages;
 
     private boolean isLoading;
@@ -35,9 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public MovieAdapter(Context context, RecyclerView recyclerView,
-                        final OnLoadMoreListener listiner, final int spanCount) {
-        this.context = context;
+    public MovieAdapter(RecyclerView recyclerView, final OnLoadMoreListener listiner, final int spanCount) {
         this.movieList = new ArrayList<>();
 
         final GridLayoutManager gridLayoutManager = (GridLayoutManager)recyclerView.getLayoutManager();
@@ -102,8 +98,16 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         return movieList != null ? movieList.size() : 0;
     }
 
+    public int getCurrentPage() {
+        return currentPage != null ? currentPage : 0;
+    }
+
     public int getNextPage() {
-        return (currentPage != null ? currentPage : 0) + 1;
+        return getCurrentPage() + 1;
+    }
+
+    public ArrayList<Movie> getItens() {
+        return movieList;
     }
 
     public void insertItens(MovieResponse movieResponse) {
@@ -146,6 +150,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
+
         @BindView(R.id.item_movie_title)
         TextView itemTitleTV;
         @BindView(R.id.item_movie_ratio)
@@ -153,15 +158,18 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         @BindView(R.id.item_movie_thumbnail)
         ImageView itemThumbnailIV;
 
+        private View view;
+
         MovieViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.view = itemView;
         }
 
         void bind(Movie movie) {
             itemTitleTV.setText(movie.getTitle());
             itemAverageRB.setRating((float) (movie.getVoteAverage() / 10));
-            PicassoHelper.loadImage(context,
+            PicassoHelper.loadImage(view.getContext(),
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
                     itemThumbnailIV);
         }

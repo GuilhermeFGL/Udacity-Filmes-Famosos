@@ -1,17 +1,21 @@
 package com.guilhermefgl.peliculas.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-public class Movie {
+public class Movie implements Parcelable{
 
-    private Integer movieId;
     private String title;
     private String overview;
     private Double popularity;
     private Boolean video;
     private Boolean adult;
+    @SerializedName("id")
+    private Integer movieId;
     @SerializedName("release_date")
     private Date release_date;
     @SerializedName("vote_count")
@@ -110,4 +114,47 @@ public class Movie {
     public void setLanguage(String language) {
         this.language = language;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(movieId);
+        out.writeString(title);
+        out.writeString(overview);
+        out.writeDouble(popularity);
+        out.writeByte((byte) (video ? 1 : 0));
+        out.writeByte((byte) (adult ? 1 : 0));
+        out.writeSerializable(release_date);
+        out.writeInt(voteCount);
+        out.writeDouble(voteAverage);
+        out.writeString(posterPath);
+        out.writeString(language);
+    }
+
+    private Movie(Parcel in) {
+        movieId = in.readInt();
+        title = in.readString();
+        overview = in.readString();
+        popularity = in.readDouble();
+        video = in.readByte() == 1;
+        adult = in.readByte() == 1;
+        release_date = (Date) in.readSerializable();
+        voteCount = in.readInt();
+        voteAverage = in.readDouble();
+        posterPath = in.readString();
+        language = in.readString();
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }
