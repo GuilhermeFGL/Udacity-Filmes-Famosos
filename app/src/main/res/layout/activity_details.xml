@@ -6,56 +6,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/primary"
     tools:context="com.guilhermefgl.peliculas.activities.DetailsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:toolbarId="@+id/toolbar">
+            app:elevation="0dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:elevation="0dp" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ImageView
             android:id="@+id/details_image"
-            android:layout_width="180dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:contentDescription="@string/details_image_desc"
-            tools:src="@mipmap/movie_background"/>
+            android:transitionName="@string/details_transition_poster"
+            tools:src="@mipmap/movie_background"
+            tools:ignore="UnusedAttribute" />
 
         <android.support.v7.widget.CardView
             android:layout_below="@+id/details_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            card_view:cardUseCompatPadding="true"
             card_view:cardCornerRadius="2dp">
 
             <RelativeLayout
@@ -130,26 +136,21 @@
                     android:layout_below="@+id/details_icons"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:textStyle="bold"
                     android:text="@string/details_date_label" />
 
                 <TextView
                     android:id="@+id/details_date"
-                    android:layout_below="@+id/details_icons"
-                    android:layout_toRightOf="@+id/details_date_label"
-                    android:layout_toEndOf="@+id/details_date_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/details_overview_label"
                     android:layout_below="@+id/details_date_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/secondary_text" />
+
+                <TextView
+                    android:id="@+id/details_overview_label"
+                    android:layout_below="@+id/details_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/details_overview_label"/>
 
                 <TextView
@@ -157,10 +158,8 @@
                     android:layout_below="@+id/details_overview_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="4"
                     android:textSize="13sp"
                     android:textColor="@color/secondary_text"
-                    android:ellipsize="end"
                     tools:text="@string/lore"/>
 
             </RelativeLayout>

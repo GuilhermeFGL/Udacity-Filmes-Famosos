@@ -9,8 +9,8 @@
     <string name="item_movie_thumbnail">movie thumbnail</string>
     <string name="item_movie_loading">Loading more movies…</string>
     <string name="menu_main_order">order options</string>
-    <string name="menu_main_popular">Popular</string>
-    <string name="menu_main_top_rated">Top Rated</string>
+    <string name="menu_main_popular">Order by popular</string>
+    <string name="menu_main_top_rated">Order by top Rated</string>
 
     <!-- DETAILS ACTIVITY -->
     <string name="details_image_desc">movie poster</string>
@@ -18,6 +18,9 @@
     <string name="details_views_desc">movie views</string>
     <string name="details_date_label">Release date:</string>
     <string name="details_overview_label">Overview:</string>
+    <string name="details_intent_shre_title">Share a movie</string>
+    <string name="details_transition_poster">transition_poster</string>
+    <string name="menu_details_share">share</string>
 
     <string name="lore">
         Lorem ipsum dolor sit amet, duo viderer maluisset definitionem ne, id malis elaboraret pri. Ea eum posse clita. Et nostrum omittam ius, no oratio tollit accusata vix, et fugit affert regione vel. Quas natum dicat ex sed, mei at omittantur suscipiantur. Suas labitur mel ea.

@@ -2,9 +2,11 @@ package com.guilhermefgl.peliculas.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,12 +14,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.adapters.MovieAdapter;
+import com.guilhermefgl.peliculas.helpers.Constants;
+import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
@@ -29,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends BaseActivity
-        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener {
+        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener, MovieAdapter.OnMovieItemClick {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -65,7 +70,7 @@ public class MainActivity extends BaseActivity
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
         mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
-        movieAdapter = new MovieAdapter(mainRV, this, spanCount);
+        movieAdapter = new MovieAdapter(mainRV, spanCount, this, this);
         mainRV.setAdapter(movieAdapter);
 
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
@@ -129,6 +134,23 @@ public class MainActivity extends BaseActivity
     public void onLoadMore() {
         movieAdapter.insertLoading();
         requestMovies(movieAdapter.getNextPage());
+    }
+
+    @Override
+    public void onMovieItemClick(Movie movie, ImageView moviePoster) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.Bundles.DETAILS_MOVIE, movie);
+
+        Bundle transition = null;
+        if (Build.VERSION.SDK_INT >= 21) {
+            transition = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(this,
+                            moviePoster,
+                            moviePoster.getTransitionName())
+                    .toBundle();
+        }
+
+        DetailsActivity.startActivity(this, bundle, transition);
     }
 
     @Override

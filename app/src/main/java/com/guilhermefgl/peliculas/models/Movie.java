@@ -10,23 +10,28 @@ import java.util.Date;
 @SuppressWarnings("unused")
 public class Movie implements Parcelable{
 
-    private String title;
-    private String overview;
-    private Double popularity;
-    private Boolean video;
-    private Boolean adult;
     @SerializedName("id")
     private Integer movieId;
+    @SerializedName("original_title")
+    private String title;
+    @SerializedName("overview")
+    private String overview;
     @SerializedName("release_date")
-    private Date release_date;
+    private Date releaseDate;
+    @SerializedName("original_language")
+    private String language;
     @SerializedName("vote_count")
     private Integer voteCount;
     @SerializedName("vote_average")
     private Double voteAverage;
+    @SerializedName("popularity")
+    private Double popularity;
     @SerializedName("poster_path")
     private String posterPath;
-    @SerializedName("original_language")
-    private String language;
+    @SerializedName("video")
+    private Boolean video;
+    @SerializedName("adult")
+    private Boolean adult;
 
     public Integer getMovieId() {
         return movieId;
@@ -52,12 +57,12 @@ public class Movie implements Parcelable{
         this.overview = overview;
     }
 
-    public Date getRelease_date() {
-        return release_date;
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setRelease_date(Date release_date) {
-        this.release_date = release_date;
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public Double getPopularity() {
@@ -76,7 +81,7 @@ public class Movie implements Parcelable{
         this.video = video;
     }
 
-    public Boolean hasAdult() {
+    public Boolean isAdult() {
         return adult;
     }
 
@@ -128,7 +133,7 @@ public class Movie implements Parcelable{
         out.writeDouble(popularity);
         out.writeByte((byte) (video ? 1 : 0));
         out.writeByte((byte) (adult ? 1 : 0));
-        out.writeSerializable(release_date);
+        out.writeSerializable(releaseDate);
         out.writeInt(voteCount);
         out.writeDouble(voteAverage);
         out.writeString(posterPath);
@@ -142,7 +147,7 @@ public class Movie implements Parcelable{
         popularity = in.readDouble();
         video = in.readByte() == 1;
         adult = in.readByte() == 1;
-        release_date = (Date) in.readSerializable();
+        releaseDate = (Date) in.readSerializable();
         voteCount = in.readInt();
         voteAverage = in.readDouble();
         posterPath = in.readString();

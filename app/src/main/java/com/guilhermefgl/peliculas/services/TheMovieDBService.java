@@ -25,6 +25,7 @@ public class TheMovieDBService {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    private static final String WEB_URL = "https://www.themoviedb.org/movie/";
     private static final String DATE_FORMMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
     public static final String ORDER_TOP_RATED = "top_rated";
@@ -63,7 +64,12 @@ public class TheMovieDBService {
 
     @NonNull
     public static String buildImageURL(String movieId) {
-        return TheMovieDBService.IMAGE_BASE_URL.concat(movieId);
+        return IMAGE_BASE_URL.concat(movieId);
+    }
+
+    @NonNull
+    public static String buildWebURL(int movieId) {
+        return WEB_URL.concat(String.valueOf(movieId));
     }
 
     public interface TheMovieDBClient {

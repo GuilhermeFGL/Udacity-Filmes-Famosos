@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Movie> movieList;
     private Integer currentPage, maxPages;
+    private OnMovieItemClick onMovieItemClick;
 
     private boolean isLoading;
     private final int VISIBLE_THRESHOLD = 4;
@@ -32,8 +33,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public MovieAdapter(RecyclerView recyclerView, final OnLoadMoreListener listiner, final int spanCount) {
+    public MovieAdapter(RecyclerView recyclerView, final int spanCount,
+                        final OnLoadMoreListener listiner, OnMovieItemClick onMovieItemClick) {
         this.movieList = new ArrayList<>();
+        this.onMovieItemClick = onMovieItemClick;
 
         final GridLayoutManager gridLayoutManager = (GridLayoutManager)recyclerView.getLayoutManager();
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -106,7 +109,12 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     public ArrayList<Movie> getItens() {
-        return movieList;
+        if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
+            ArrayList<Movie> movies = new ArrayList<>(movieList);
+            movies.remove(movieList.size() - 1);
+            return movies;
+        }
+        return new ArrayList<>(movieList);
     }
 
     public void insertItens(MovieResponse movieResponse) {
@@ -138,17 +146,13 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         isLoading = false;
     }
 
-    public interface OnLoadMoreListener {
-        void onLoadMore();
-    }
-
     class LoadingViewHolder extends RecyclerView.ViewHolder {
         LoadingViewHolder(View view) {
             super(view);
         }
     }
 
-    class MovieViewHolder extends RecyclerView.ViewHolder {
+    class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.item_movie_title)
         TextView itemTitleTV;
@@ -158,6 +162,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         ImageView itemThumbnailIV;
 
         private final View view;
+        private Movie movie;
 
         MovieViewHolder(View itemView) {
             super(itemView);
@@ -166,11 +171,26 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
 
         void bind(Movie movie) {
+            this.movie = movie;
             itemTitleTV.setText(movie.getTitle());
             itemAverageRB.setRating((float) (movie.getVoteAverage() / 10));
             PicassoHelper.loadImage(view.getContext(),
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
                     itemThumbnailIV);
+            view.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            onMovieItemClick.onMovieItemClick(movie, itemThumbnailIV);
+        }
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore();
+    }
+
+    public interface OnMovieItemClick {
+        void onMovieItemClick(Movie movie, ImageView imageView);
     }
 }
