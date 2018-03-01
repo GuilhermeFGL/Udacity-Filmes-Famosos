@@ -3,6 +3,7 @@ package com.guilhermefgl.peliculas.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.helpers.Constants;
 import com.guilhermefgl.peliculas.helpers.PicassoHelper;
+import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
@@ -25,7 +27,7 @@ import butterknife.ButterKnife;
 
 public class DetailsActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
+    @BindView(R.id.details_toolbar)
     Toolbar toolbar;
     @BindView(R.id.details_image)
     ImageView posterIV;
@@ -68,6 +70,7 @@ public class DetailsActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         if (getIntent().getExtras() != null && !getIntent().getExtras().isEmpty()) {
@@ -85,7 +88,7 @@ public class DetailsActivity extends BaseActivity {
             viewsTV.setText(String.valueOf(movie.getPopularity()));
             languageTV.setText(movie.getLanguage());
             adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-//            dateTV.setText(DATE_FORMATER.format(movie.getReleaseDate()));
+            dateTV.setText(DATE_FORMATER.format(movie.getReleaseDate()));
             overviewTV.setText(movie.getOverview());
             PicassoHelper.loadImage(this,
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
@@ -117,12 +120,19 @@ public class DetailsActivity extends BaseActivity {
             return;
         }
 
-        startActivity(Intent.createChooser(
-                new Intent(android.content.Intent.ACTION_SEND)
-                        .setType("text/plain")
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-                        .putExtra(Intent.EXTRA_SUBJECT, movie.getTitle())
-                        .putExtra(Intent.EXTRA_TEXT, TheMovieDBService.buildWebURL(movie.getMovieId())),
-                getString(R.string.menu_details_share)));
+        try {
+            startActivity(Intent.createChooser(
+                    new Intent(android.content.Intent.ACTION_SEND)
+                            .setType("text/plain")
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+                            .putExtra(Intent.EXTRA_SUBJECT, movie.getTitle())
+                            .putExtra(Intent.EXTRA_TEXT, TheMovieDBService.buildWebURL(movie.getMovieId())),
+                    getString(R.string.menu_details_share)));
+        } catch (Exception e) {
+            SnackBarHelper.make(this,
+                    findViewById(R.id.details_layout),
+                    R.string.error_share_label,
+                    Snackbar.LENGTH_SHORT).show();
+        }
     }
 }

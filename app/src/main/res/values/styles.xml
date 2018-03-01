@@ -17,6 +17,7 @@
         <item name="android:borderlessButtonStyle">@style/FlatButton</item>
 
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
+        <item name="android:windowSharedElementsUseOverlay" tools:ignore="NewApi">false</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">

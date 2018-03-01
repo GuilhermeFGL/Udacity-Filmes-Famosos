@@ -17,11 +17,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.adapters.MovieAdapter;
 import com.guilhermefgl.peliculas.helpers.Constants;
+import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
@@ -81,13 +81,11 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        errorSB = Snackbar.make(
+        errorSB = SnackBarHelper.make(this,
                 findViewById(R.id.main_layout),
                 R.string.error_connection_label,
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.error_connection_action, this);
-        ((TextView) errorSB.getView().findViewById(android.support.design.R.id.snackbar_text))
-                .setTextColor(getResources().getColor(R.color.primary_light));
 
         if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_MOVIES)) {
             currentOrder = R.id.menu_main_popular;

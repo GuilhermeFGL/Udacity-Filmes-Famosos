@@ -4,6 +4,7 @@
     <!-- GERAL -->
     <string name="error_connection_label">There is no Internet connection</string>
     <string name="error_connection_action">try again</string>
+    <string name="error_share_label">Could not share</string>
 
     <!-- MAIN ACTIVITY -->
     <string name="item_movie_thumbnail">movie thumbnail</string>
