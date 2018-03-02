@@ -6,6 +6,7 @@
     android:id="@+id/details_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary"
     tools:context="com.guilhermefgl.peliculas.activities.DetailsActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -51,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                android:background="@android:color/white"
                 card_view:cardCornerRadius="2dp">
 
                 <RelativeLayout
