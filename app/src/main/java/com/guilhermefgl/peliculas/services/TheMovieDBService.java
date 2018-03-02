@@ -14,6 +14,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -32,18 +33,22 @@ public class TheMovieDBService {
 
     private static final OkHttpClient httpClient;
     private static final Gson gson;
-    static { httpClient = new OkHttpClient.Builder()
-            .addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(@NonNull Chain chain) throws IOException {
-                    Request request = chain.request();
-                    HttpUrl originalHttpUrl = request.url();
-                    HttpUrl url = originalHttpUrl.newBuilder()
-                            .addQueryParameter("api_key", BuildConfig.API_KEY)
-                            .build();
-                    return chain.proceed(request.newBuilder().url(url).build());
-                }
-            }).build();
+    static {
+        httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(@NonNull Chain chain) throws IOException {
+                        Request request = chain.request();
+                        HttpUrl originalHttpUrl = request.url();
+                        HttpUrl url = originalHttpUrl.newBuilder()
+                                .addQueryParameter("api_key", BuildConfig.API_KEY)
+                                .build();
+                        return chain.proceed(request.newBuilder().url(url).build());
+                    }
+                }).addInterceptor(new HttpLoggingInterceptor().setLevel(
+                        BuildConfig.LOGGER_ENABLED ?
+                                HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE)
+                ).build();
     }
     static {
          gson = new GsonBuilder()
