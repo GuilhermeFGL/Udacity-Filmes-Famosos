@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity
         mainSR.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestMovies(1);
+                requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
             }
         });
 
@@ -89,10 +89,10 @@ public class MainActivity extends BaseActivity
 
         if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_MOVIES)) {
             currentOrder = R.id.menu_main_popular;
-            requestMovies(1);
+            requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
         }
         else {
-            movieAdapter.insertItens((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
+            movieAdapter.insertItems((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
             if (savedInstanceState.containsKey(STATE_ORDER)) {
                 int orderState = savedInstanceState.getInt(STATE_ORDER);
                 currentOrder = orderState > 0 ? orderState : R.id.menu_main_popular;
@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity
                 || item.getItemId() == R.id.menu_main_top_rated) {
             currentOrder = item.getItemId();
             toolbar.setTitle(item.getTitle());
-            requestMovies(1);
+            requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelable(STATE_MOVIES, new MovieResponse(){{
-            setResults(movieAdapter.getItens());
+            setResults(movieAdapter.getItems());
             setPage(movieAdapter.getCurrentPage());
             setTotalPages(movieAdapter.getNextPage());
         }});
@@ -140,7 +140,7 @@ public class MainActivity extends BaseActivity
         bundle.putParcelable(Constants.Bundles.DETAILS_MOVIE, movie);
 
         Bundle transition = null;
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             transition = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(this,
                             moviePoster,
@@ -199,7 +199,7 @@ public class MainActivity extends BaseActivity
                                            @NonNull final Response<MovieResponse> response) {
                         movieAdapter.removeLoading();
                         if(response.isSuccessful() && response.body() != null) {
-                            movieAdapter.insertItens(response.body());
+                            movieAdapter.insertItems(response.body());
                             setErrorLayout(false);
                         } else {
                             setErrorLayout(true);

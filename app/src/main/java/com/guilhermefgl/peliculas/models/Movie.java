@@ -154,7 +154,8 @@ public class Movie implements Parcelable{
         language = in.readString();
     }
 
-    static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    @SuppressWarnings("WeakerAccess")
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
         }

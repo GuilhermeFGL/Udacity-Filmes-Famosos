@@ -35,7 +35,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int VIEW_TYPE_LOADING = 1;
 
     public MovieAdapter(RecyclerView recyclerView, final int spanCount,
-                        final OnLoadMoreListener listiner, OnMovieItemClick onMovieItemClick) {
+                        final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
         this.movieList = new ArrayList<>();
         this.onMovieItemClick = onMovieItemClick;
 
@@ -62,8 +62,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 if (!isLoading && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)
                         && currentPage < maxPages) {
                     isLoading = true;
-                    if (listiner != null) {
-                        listiner.onLoadMore();
+                    if (listener != null) {
+                        listener.onLoadMore();
                     }
                 }
             }
@@ -109,7 +109,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return getCurrentPage() + 1;
     }
 
-    public ArrayList<Movie> getItens() {
+    public ArrayList<Movie> getItems() {
         if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
             ArrayList<Movie> movies = new ArrayList<>(movieList);
             movies.remove(movieList.size() - 1);
@@ -118,7 +118,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return new ArrayList<>(movieList);
     }
 
-    public void insertItens(MovieResponse movieResponse) {
+    public void insertItems(MovieResponse movieResponse) {
         currentPage = movieResponse.getPage();
         maxPages = movieResponse.getTotalPages();
         if (movieResponse.getPage() == 1) {

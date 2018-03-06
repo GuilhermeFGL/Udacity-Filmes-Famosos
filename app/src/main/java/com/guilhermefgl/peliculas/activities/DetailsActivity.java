@@ -47,11 +47,11 @@ public class DetailsActivity extends BaseActivity {
     TextView overviewTV;
 
     private Movie movie;
-    private final SimpleDateFormat DATE_FORMATER
-            = new SimpleDateFormat(Constants.DATE_FORMATER, Locale.getDefault());
+    private final SimpleDateFormat DATE_FORMATTER
+            = new SimpleDateFormat(Constants.DATE_FORMATTER, Locale.getDefault());
 
     public static void startActivity(BaseActivity activity, Bundle bundle, Bundle transition) {
-        if (Build.VERSION.SDK_INT >= 21 && transition != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && transition != null) {
             activity.startActivity(
                     new Intent(activity, DetailsActivity.class).putExtras(bundle),
                     transition);
@@ -73,7 +73,7 @@ public class DetailsActivity extends BaseActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        if (getIntent().getExtras() != null && !getIntent().getExtras().isEmpty()) {
+        if (getIntent().getExtras() != null && getIntent().hasExtra(Constants.Bundles.DETAILS_MOVIE)) {
             Object extra = getIntent().getExtras().get(Constants.Bundles.DETAILS_MOVIE);
             if (extra != null && extra instanceof Movie) {
                 movie = (Movie) extra;
@@ -88,7 +88,7 @@ public class DetailsActivity extends BaseActivity {
             viewsTV.setText(String.valueOf(movie.getPopularity()));
             languageTV.setText(movie.getLanguage());
             adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-            dateTV.setText(DATE_FORMATER.format(movie.getReleaseDate()));
+            dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
             overviewTV.setText(movie.getOverview());
             PicassoHelper.loadImage(this,
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
