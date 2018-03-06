@@ -11,7 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -98,23 +97,6 @@ public class MainActivity extends BaseActivity
                 currentOrder = orderState > 0 ? orderState : R.id.menu_main_popular;
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_main_popular
-                || item.getItemId() == R.id.menu_main_top_rated) {
-            currentOrder = item.getItemId();
-            toolbar.setTitle(item.getTitle());
-            requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
