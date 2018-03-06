@@ -10,8 +10,8 @@
     <string name="item_movie_thumbnail">movie thumbnail</string>
     <string name="item_movie_loading">Loading more movies…</string>
     <string name="menu_main_order">order options</string>
-    <string name="menu_main_popular">Order by popular</string>
-    <string name="menu_main_top_rated">Order by top Rated</string>
+    <string name="menu_main_popular">Order by Popular</string>
+    <string name="menu_main_top_rated">Order by Top Rated</string>
 
     <!-- DETAILS ACTIVITY -->
     <string name="details_image_desc">movie poster</string>

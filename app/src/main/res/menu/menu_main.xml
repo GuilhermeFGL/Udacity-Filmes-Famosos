@@ -6,14 +6,12 @@
         android:icon="@drawable/ic_views"
         android:id="@+id/menu_main_popular"
         android:title="@string/menu_main_popular"
-        app:itemIconTint="@drawable/selector_bottom_navigation"
         app:showAsAction="ifRoom" />
 
     <item
-        android:icon="@drawable/ic_views"
+        android:icon="@drawable/ic_star"
         android:id="@+id/menu_main_top_rated"
         android:title="@string/menu_main_top_rated"
-        app:itemIconTint="@drawable/selector_bottom_navigation"
         app:showAsAction="ifRoom" />
 
 </menu>
