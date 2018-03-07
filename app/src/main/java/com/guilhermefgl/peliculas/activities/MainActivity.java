@@ -34,7 +34,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends BaseActivity
-        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener, MovieAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener {
+        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener,
+        MovieAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
