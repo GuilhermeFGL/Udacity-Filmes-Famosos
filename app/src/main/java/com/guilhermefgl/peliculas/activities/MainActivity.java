@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends BaseActivity
-        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener, MovieAdapter.OnMovieItemClick {
+        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener, MovieAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -43,6 +44,8 @@ public class MainActivity extends BaseActivity
     SwipeRefreshLayout mainSR;
     @BindView(R.id.main_list)
     RecyclerView mainRV;
+    @BindView(R.id.main_navigation)
+    BottomNavigationView orderBNV;
     @BindView(R.id.error_conection_layout)
     LinearLayout errorConnectionLL;
 
@@ -79,6 +82,8 @@ public class MainActivity extends BaseActivity
                 requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
             }
         });
+
+        orderBNV.setOnNavigationItemSelectedListener(this);
 
         errorSB = SnackBarHelper.make(this,
                 findViewById(R.id.main_layout),
@@ -136,6 +141,13 @@ public class MainActivity extends BaseActivity
     @Override
     public void onClick(View v) {
         actionRetry();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        currentOrder = item.getItemId();
+        requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
+        return true;
     }
 
     @OnClick(R.id.error_conection_action)
