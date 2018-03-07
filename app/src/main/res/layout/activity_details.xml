@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/details_image_desc"
                 android:transitionName="@string/details_transition_poster"
                 tools:src="@mipmap/movie_background"
@@ -96,8 +96,8 @@
                             android:layout_marginRight="8dp"
                             android:layout_marginEnd="8dp"
                             android:textSize="12sp"
-                            android:drawableLeft="@drawable/ic_views"
-                            android:drawableStart="@drawable/ic_views"
+                            android:drawableLeft="@drawable/ic_views_selector"
+                            android:drawableStart="@drawable/ic_views_selector"
                             tools:text="88.888" />
 
                         <TextView
@@ -107,8 +107,8 @@
                             android:layout_marginRight="8dp"
                             android:layout_marginEnd="8dp"
                             android:textSize="12sp"
-                            android:drawableLeft="@drawable/ic_language"
-                            android:drawableStart="@drawable/ic_language"
+                            android:drawableLeft="@drawable/ic_languages_selector"
+                            android:drawableStart="@drawable/ic_languages_selector"
                             tools:text="en-US" />
 
                         <TextView

@@ -94,8 +94,7 @@ public class MainActivity extends BaseActivity
         if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_MOVIES)) {
             currentOrder = R.id.menu_main_popular;
             requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
-        }
-        else {
+        } else {
             movieAdapter.insertItems((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
             if (savedInstanceState.containsKey(STATE_ORDER)) {
                 int orderState = savedInstanceState.getInt(STATE_ORDER);
