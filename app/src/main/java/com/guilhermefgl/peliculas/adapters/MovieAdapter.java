@@ -137,7 +137,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void removeLoading() {
-        if (!movieList.isEmpty()) {
+        if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
             movieList.remove(movieList.size() - 1);
             notifyItemRemoved(movieList.size());
         }

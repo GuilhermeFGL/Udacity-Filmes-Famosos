@@ -5,9 +5,12 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +25,7 @@ import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.adapters.MovieAdapter;
 import com.guilhermefgl.peliculas.helpers.Constants;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
+import com.guilhermefgl.peliculas.loaders.MainLoader;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
@@ -29,13 +33,11 @@ import com.guilhermefgl.peliculas.services.TheMovieDBService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends BaseActivity
         implements MovieAdapter.OnLoadMoreListener, View.OnClickListener,
-        MovieAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener {
+        MovieAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener,
+        LoaderManager.LoaderCallbacks<MovieResponse> {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -69,6 +71,7 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        getSupportLoaderManager().initLoader(MainLoader.LOADER_ID, null, this);
 
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
@@ -183,29 +186,40 @@ public class MainActivity extends BaseActivity
     }
 
     private void requestMovies(int page) {
-        startRequest();
         String order = currentOrder == R.id.menu_main_popular ?
                 TheMovieDBService.ORDER_POPULAR : TheMovieDBService.ORDER_TOP_RATED;
-        TheMovieDBService.getClient().list(order, page).enqueue(
-                new Callback<MovieResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<MovieResponse> call,
-                                           @NonNull final Response<MovieResponse> response) {
-                        movieAdapter.removeLoading();
-                        if(response.isSuccessful() && response.body() != null) {
-                            movieAdapter.insertItems(response.body());
-                            setErrorLayout(false);
-                        } else {
-                            setErrorLayout(true);
-                        }
-                        endRequest();
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
-                        endRequest();
-                        setErrorLayout(true);
-                    }
-                });
+        Bundle queryBundle = new Bundle();
+        queryBundle.putInt(MainLoader.BUNDLE_PAGE, page);
+        queryBundle.putString(MainLoader.BUNDLE_ORDER, order);
+        LoaderManager loaderManager = getSupportLoaderManager();
+        if (loaderManager.getLoader(MainLoader.LOADER_ID) == null) {
+            loaderManager.initLoader(MainLoader.LOADER_ID, queryBundle, this);
+        } else {
+            loaderManager.restartLoader(MainLoader.LOADER_ID, queryBundle, this);
+        }
     }
+
+    @NonNull
+    @Override
+    public Loader<MovieResponse> onCreateLoader(int id, @Nullable Bundle args) {
+        startRequest();
+        String order = args != null ? args.getString(MainLoader.BUNDLE_ORDER) : null;
+        Integer page = args != null ? args.getInt(MainLoader.BUNDLE_PAGE) : null;
+        return new MainLoader(this, order, page);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<MovieResponse> loader, MovieResponse data) {
+        movieAdapter.removeLoading();
+        if(data != null) {
+            movieAdapter.insertItems(data);
+            setErrorLayout(false);
+        } else {
+            setErrorLayout(true);
+        }
+        endRequest();
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<MovieResponse> loader) { }
 }

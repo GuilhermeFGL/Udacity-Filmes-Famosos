@@ -1,30 +1,25 @@
 package com.guilhermefgl.peliculas.loaders;
 
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.content.Loader;
-import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
 
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
-import java.io.IOException;
+public class MainLoader extends AsyncTaskLoader<MovieResponse> {
 
-public class MainLoader extends AsyncTaskLoader<MovieResponse>
-        implements LoaderManager.LoaderCallbacks<MovieResponse> {
-
+    public static final Integer LOADER_ID = 1001;
     public static final String BUNDLE_ORDER = MainLoader.class.getName().concat(".BUNDLE_ORDER");
     public static final String BUNDLE_PAGE = MainLoader.class.getName().concat(".BUNDLE_PAGE");
 
-    private LoaderCallback loaderCallback;
     private MovieResponse moviesCached;
     private String order;
     private Integer page;
 
-    public MainLoader(Context context, LoaderCallback loaderCallback) {
+    public MainLoader(Context context, String order, Integer page) {
         super(context);
-        this.loaderCallback = loaderCallback;
+        this.order = order;
+        this.page = page;
     }
 
     @Override
@@ -38,18 +33,14 @@ public class MainLoader extends AsyncTaskLoader<MovieResponse>
     }
 
     @Override
-    public Loader<MovieResponse> onCreateLoader(int id, Bundle args) {
-        moviesCached = null;
-        order = args.getString(BUNDLE_ORDER);
-        page = args.getInt(BUNDLE_PAGE);
-        return this;
-    }
-
-    @Override
     public MovieResponse loadInBackground() {
+        if (order == null || page == null) {
+            return null;
+        }
+
         try {
             return TheMovieDBService.getClient().list(order, page).execute().body();
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -58,22 +49,5 @@ public class MainLoader extends AsyncTaskLoader<MovieResponse>
     public void deliverResult(MovieResponse data) {
         this.moviesCached = data;
         super.deliverResult(data);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<MovieResponse> loader, MovieResponse data) {
-        if (data == null) {
-            loaderCallback.onLoaderError();
-        } else {
-            loaderCallback.onLoaderSuccess(data);
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<MovieResponse> loader) { }
-
-    public interface LoaderCallback {
-        void onLoaderSuccess(MovieResponse movies);
-        void onLoaderError();
     }
 }
