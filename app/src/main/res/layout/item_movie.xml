@@ -7,11 +7,10 @@
     card_view:cardUseCompatPadding="true"
     card_view:cardCornerRadius="2dp">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary">
+        android:background="@color/primary_dark">
 
         <ImageView
             android:id="@+id/item_movie_thumbnail"
@@ -20,9 +19,12 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:contentDescription="@string/item_movie_thumbnail"
-            tool:src="@drawable/ic_launcher"/>
+            android:transitionName="@string/details_transition_poster"
+            tool:src="@drawable/ic_launcher"
+            tool:ignore="UnusedAttribute" />
 
         <LinearLayout
+            android:id="@+id/item_movie_description"
             android:layout_below="@+id/item_movie_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

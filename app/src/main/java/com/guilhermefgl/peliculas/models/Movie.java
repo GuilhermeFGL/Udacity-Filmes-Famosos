@@ -1,27 +1,37 @@
 package com.guilhermefgl.peliculas.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-public class Movie {
+@SuppressWarnings("unused")
+public class Movie implements Parcelable{
 
+    @SerializedName("id")
     private Integer movieId;
+    @SerializedName("original_title")
     private String title;
+    @SerializedName("overview")
     private String overview;
-    private Double popularity;
-    private Boolean video;
-    private Boolean adult;
     @SerializedName("release_date")
-    private Date release_date;
+    private Date releaseDate;
+    @SerializedName("original_language")
+    private String language;
     @SerializedName("vote_count")
     private Integer voteCount;
     @SerializedName("vote_average")
     private Double voteAverage;
+    @SerializedName("popularity")
+    private Double popularity;
     @SerializedName("poster_path")
     private String posterPath;
-    @SerializedName("original_language")
-    private String language;
+    @SerializedName("video")
+    private Boolean video;
+    @SerializedName("adult")
+    private Boolean adult;
 
     public Integer getMovieId() {
         return movieId;
@@ -47,12 +57,12 @@ public class Movie {
         this.overview = overview;
     }
 
-    public Date getRelease_date() {
-        return release_date;
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setRelease_date(Date release_date) {
-        this.release_date = release_date;
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public Double getPopularity() {
@@ -71,7 +81,7 @@ public class Movie {
         this.video = video;
     }
 
-    public Boolean hasAdult() {
+    public Boolean isAdult() {
         return adult;
     }
 
@@ -110,4 +120,48 @@ public class Movie {
     public void setLanguage(String language) {
         this.language = language;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(movieId);
+        out.writeString(title);
+        out.writeString(overview);
+        out.writeDouble(popularity);
+        out.writeByte((byte) (video ? 1 : 0));
+        out.writeByte((byte) (adult ? 1 : 0));
+        out.writeSerializable(releaseDate);
+        out.writeInt(voteCount);
+        out.writeDouble(voteAverage);
+        out.writeString(posterPath);
+        out.writeString(language);
+    }
+
+    private Movie(Parcel in) {
+        movieId = in.readInt();
+        title = in.readString();
+        overview = in.readString();
+        popularity = in.readDouble();
+        video = in.readByte() == 1;
+        adult = in.readByte() == 1;
+        releaseDate = (Date) in.readSerializable();
+        voteCount = in.readInt();
+        voteAverage = in.readDouble();
+        posterPath = in.readString();
+        language = in.readString();
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

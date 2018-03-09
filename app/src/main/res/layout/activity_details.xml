@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/details_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary"
+    tools:context="com.guilhermefgl.peliculas.activities.DetailsActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/details_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:elevation="0dp" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/details_image"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/details_image_desc"
+                android:transitionName="@string/details_transition_poster"
+                tools:src="@mipmap/movie_background"
+                tools:ignore="UnusedAttribute" />
+
+            <android.support.v7.widget.CardView
+                android:layout_below="@+id/details_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@android:color/white"
+                card_view:cardCornerRadius="2dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/details_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="18sp"
+                        android:textColor="@color/primary"
+                        android:textStyle="bold"
+                        tools:text="Matrix Revolution"/>
+
+                    <LinearLayout
+                        android:id="@+id/details_icons"
+                        android:layout_below="@+id/details_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <RatingBar
+                            android:id="@+id/details_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:numStars="5"
+                            android:stepSize="0.1"
+                            tools:rating="4.5"
+                            style="?android:attr/ratingBarStyleSmall" />
+
+                        <TextView
+                            android:id="@+id/details_views_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="12sp"
+                            android:drawableLeft="@drawable/ic_views_selector"
+                            android:drawableStart="@drawable/ic_views_selector"
+                            tools:text="88.888" />
+
+                        <TextView
+                            android:id="@+id/details_views_language"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="12sp"
+                            android:drawableLeft="@drawable/ic_languages_selector"
+                            android:drawableStart="@drawable/ic_languages_selector"
+                            tools:text="en-US" />
+
+                        <TextView
+                            android:id="@+id/details_adult"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/red_500"
+                            android:text="@string/details_adult_label" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/details_date_label"
+                        android:layout_below="@+id/details_icons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_date_label" />
+
+                    <TextView
+                        android:id="@+id/details_date"
+                        android:layout_below="@+id/details_date_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/secondary_text" />
+
+                    <TextView
+                        android:id="@+id/details_overview_label"
+                        android:layout_below="@+id/details_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/details_overview_label"/>
+
+                    <TextView
+                        android:id="@+id/details_overview"
+                        android:layout_below="@+id/details_overview_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="13sp"
+                        android:textColor="@color/secondary_text"
+                        tools:text="@string/lore"/>
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+        </RelativeLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
