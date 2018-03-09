@@ -7,7 +7,7 @@ import com.guilhermefgl.peliculas.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-public class PicassoHelper {
+public final class PicassoHelper {
 
     private PicassoHelper() { }
 

@@ -29,8 +29,7 @@ public class ScrollingFooterBehavior  extends CoordinatorLayout.Behavior<BottomN
                                        @NonNull BottomNavigationView child,
                                        @NonNull View directTargetChild,
                                        @NonNull View target,
-                                       int axes, int type)
-    {
+                                       int axes, int type) {
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL;
     }
 
@@ -39,8 +38,7 @@ public class ScrollingFooterBehavior  extends CoordinatorLayout.Behavior<BottomN
                                @NonNull BottomNavigationView child,
                                @NonNull View target, int dxConsumed, int dyConsumed,
                                int dxUnconsumed, int dyUnconsumed,
-                               @ViewCompat.NestedScrollType int type)
-    {
+                               @ViewCompat.NestedScrollType int type) {
         if (dyConsumed > 0) {
             slideDown(child);
         } else if (dyConsumed < 0) {
@@ -50,11 +48,11 @@ public class ScrollingFooterBehavior  extends CoordinatorLayout.Behavior<BottomN
 
     private void slideUp(BottomNavigationView child) {
         child.clearAnimation();
-        child.animate().translationY(0).setDuration(200);
+        child.animate().translationY(0).setDuration(100);
     }
 
     private void slideDown(BottomNavigationView child) {
         child.clearAnimation();
-        child.animate().translationY(height).setDuration(200);
+        child.animate().translationY(height).setDuration(100);
     }
 }

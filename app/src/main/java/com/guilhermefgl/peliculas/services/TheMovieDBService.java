@@ -22,7 +22,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public class TheMovieDBService {
+public final class TheMovieDBService {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";

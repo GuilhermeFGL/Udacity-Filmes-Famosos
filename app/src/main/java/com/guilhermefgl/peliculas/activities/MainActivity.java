@@ -210,8 +210,8 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onLoadFinished(@NonNull Loader<MovieResponse> loader, MovieResponse data) {
-        movieAdapter.removeLoading();
         if(data != null) {
+            movieAdapter.removeLoading();
             movieAdapter.insertItems(data);
             setErrorLayout(false);
         } else {
