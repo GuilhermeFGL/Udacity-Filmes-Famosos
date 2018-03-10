@@ -34,8 +34,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public MainAdapter(RecyclerView recyclerView, final int spanCount,
-                       final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
+    MainAdapter(RecyclerView recyclerView, final int spanCount,
+                final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
         this.movieList = new ArrayList<>();
         this.onMovieItemClick = onMovieItemClick;
 
@@ -101,15 +101,15 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return movieList != null ? movieList.size() : 0;
     }
 
-    public int getCurrentPage() {
+    int getCurrentPage() {
         return currentPage != null ? currentPage : 0;
     }
 
-    public int getNextPage() {
+    int getNextPage() {
         return getCurrentPage() + 1;
     }
 
-    public ArrayList<Movie> getItems() {
+    ArrayList<Movie> getItems() {
         if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
             ArrayList<Movie> movies = new ArrayList<>(movieList);
             movies.remove(movieList.size() - 1);
@@ -118,10 +118,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return new ArrayList<>(movieList);
     }
 
-    public void insertItems(MovieResponse movieResponse) {
+    void insertItems(MovieResponse movieResponse) {
         currentPage = movieResponse.getPage();
         maxPages = movieResponse.getTotalPages();
-        if (movieResponse.getPage() == 1) {
+        if (currentPage == TheMovieDBService.LISTING_FIRST_PAGE) {
             movieList = movieResponse.getResults();
         } else {
             movieList.addAll(movieResponse.getResults());
@@ -129,21 +129,21 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void insertLoading() {
+    void insertLoading() {
         if (movieList.get(movieList.size() - 1) != null) {
             movieList.add(null);
             notifyItemInserted(movieList.size() - 1);
         }
     }
 
-    public void removeLoading() {
+    void removeLoading() {
         if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
             movieList.remove(movieList.size() - 1);
             notifyItemRemoved(movieList.size());
         }
     }
 
-    public void setFinishLoading() {
+    void setFinishLoading() {
         isLoading = false;
     }
 

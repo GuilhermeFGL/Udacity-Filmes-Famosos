@@ -17,10 +17,10 @@ import static com.guilhermefgl.peliculas.models.provider.MovieContract.MovieEntr
 
 public class MovieDBHelper extends SQLiteOpenHelper {
 
-    private static final SimpleDateFormat DATE_FORMATTER
+    public static final SimpleDateFormat DATE_FORMATTER
             = new SimpleDateFormat(TheMovieDBService.DATE_FORMAT, Locale.getDefault());
 
-    public MovieDBHelper(Context context) {
+    MovieDBHelper(Context context) {
         super(context, BuildConfig.DB_NAME, null, BuildConfig.VERSION_CODE);
     }
 
@@ -28,19 +28,18 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String CREATE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
                 MovieEntry._ID                 + " INTEGER PRIMARY KEY, " +
-                MovieEntry.COLUMN_API_ID       + " INTEGER NOT NULL " +
-                MovieEntry.COLUMN_TITLE        + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_OVERVIEW     + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_DATE         + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_LANGUAGE     + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_VOTE_COUNT   + " INTEGER NOT NULL " +
-                MovieEntry.COLUMN_VOTE_AVERAGE + " DOUBLE NOT NULL " +
-                MovieEntry.COLUMN_POPULARITY   + " INTEGER NOT NULL " +
-                MovieEntry.COLUMN_POSTER       + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_VIDEO        + " BIT NOT NULL " +
-                MovieEntry.COLUMN_ADULT        + " BIT NOT NULL " +
+                MovieEntry.COLUMN_API_ID       + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_TITLE        + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_OVERVIEW     + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_DATE         + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_LANGUAGE     + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_VOTE_COUNT   + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_VOTE_AVERAGE + " DOUBLE NOT NULL, " +
+                MovieEntry.COLUMN_POPULARITY   + " DOUBLE NOT NULL, " +
+                MovieEntry.COLUMN_POSTER       + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_VIDEO        + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_ADULT        + " INTEGER NOT NULL, " +
                 MovieEntry.COLUMN_ORDER        + " TEXT NOT NULL);";
-
         db.execSQL(CREATE_TABLE);
     }
 
@@ -75,8 +74,8 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         contentValues.put(MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
         contentValues.put(MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
         contentValues.put(MovieEntry.COLUMN_POSTER, movie.getPosterPath());
-        contentValues.put(MovieEntry.COLUMN_VIDEO, movie.hasVideo());
-        contentValues.put(MovieEntry.COLUMN_ADULT, movie.isAdult());
+        contentValues.put(MovieEntry.COLUMN_VIDEO, movie.hasVideo() ? 1 : 0);
+        contentValues.put(MovieEntry.COLUMN_ADULT, movie.isAdult() ? 1 : 0);
         contentValues.put(MovieEntry.COLUMN_ORDER, order);
         return contentValues;
     }

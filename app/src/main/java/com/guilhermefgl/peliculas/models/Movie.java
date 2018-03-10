@@ -1,13 +1,19 @@
 package com.guilhermefgl.peliculas.models;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+import com.guilhermefgl.peliculas.models.provider.MovieDBHelper;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
-@SuppressWarnings("unused")
+import static com.guilhermefgl.peliculas.models.provider.MovieContract.MovieEntry;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Movie implements Parcelable{
 
     @SerializedName("id")
@@ -32,6 +38,8 @@ public class Movie implements Parcelable{
     private Boolean video;
     @SerializedName("adult")
     private Boolean adult;
+
+    public Movie() { }
 
     public Integer getMovieId() {
         return movieId;
@@ -121,6 +129,31 @@ public class Movie implements Parcelable{
         this.language = language;
     }
 
+    public static ArrayList<Movie> createFromCursor(final Cursor cursor) {
+        ArrayList<Movie> movies = new ArrayList<>();
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            movies.add(new Movie() {{
+                setMovieId(cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_API_ID)));
+                setTitle(cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_TITLE)));
+                setOverview(cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_OVERVIEW)));
+                setLanguage(cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_LANGUAGE)));
+                setVoteCount(cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_VOTE_COUNT)));
+                setVoteAverage(cursor.getDouble(cursor.getColumnIndex(MovieEntry.COLUMN_VOTE_AVERAGE)));
+                setPopularity(cursor.getDouble(cursor.getColumnIndex(MovieEntry.COLUMN_POPULARITY)));
+                setPosterPath(cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER)));
+                setVideo(cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_VIDEO)) == 1);
+                setAdult(cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_ADULT)) == 1);
+                try {
+                    setReleaseDate(
+                            MovieDBHelper.DATE_FORMATTER.parse(
+                                    cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_DATE))));
+                } catch (ParseException ignored) { }
+            }});
+        }
+        return movies;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -154,7 +187,6 @@ public class Movie implements Parcelable{
         language = in.readString();
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);

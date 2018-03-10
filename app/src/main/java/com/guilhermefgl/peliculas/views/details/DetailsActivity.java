@@ -89,8 +89,10 @@ public class DetailsActivity extends BaseActivity {
             viewsTV.setText(String.valueOf(movie.getPopularity()));
             languageTV.setText(movie.getLanguage());
             adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-            dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
             overviewTV.setText(movie.getOverview());
+            if (movie.getReleaseDate() != null) {
+                dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
+            }
             PicassoHelper.loadImage(this,
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
                     posterIV);

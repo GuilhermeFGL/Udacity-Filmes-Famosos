@@ -36,7 +36,7 @@ public final class MovieContract {
         public static final String COLUMN_POSTER = "poster_path";
         public static final String COLUMN_VIDEO = "has_video";
         public static final String COLUMN_ADULT = "is_adult";
-        public static final String COLUMN_ORDER = "order";
+        public static final String COLUMN_ORDER = "movie_order";
     }
 
     public static final class Orders {

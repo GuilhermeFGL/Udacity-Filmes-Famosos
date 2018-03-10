@@ -1,18 +1,11 @@
 package com.guilhermefgl.peliculas.services.loaders;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
-import com.guilhermefgl.peliculas.models.provider.MovieDBHelper;
+import com.guilhermefgl.peliculas.services.LocalStorageWriter;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
-
-import java.util.List;
-
-import static com.guilhermefgl.peliculas.models.provider.MovieContract.MovieEntry;
 
 public class MainLoader extends AsyncTaskLoader<MovieResponse> {
 
@@ -51,12 +44,9 @@ public class MainLoader extends AsyncTaskLoader<MovieResponse> {
                     TheMovieDBService.getClient().list(order, page).execute().body();
 
             if (response != null) {
-                new LocalStorageWorker().execute(new LocalStorageWorker.MovieParams() {{
-                    context = getContext();
-                    responseMovies = response.getResults();
-                    requestPage = page;
-                    requestOrder = order;
-                }});
+                new LocalStorageWriter().execute(
+                        new LocalStorageWriter.MovieParams(
+                                getContext(), response.getResults(), page, order));
             }
 
             return response;
@@ -69,37 +59,5 @@ public class MainLoader extends AsyncTaskLoader<MovieResponse> {
     public void deliverResult(MovieResponse data) {
         this.moviesCached = data;
         super.deliverResult(data);
-    }
-
-    private static class LocalStorageWorker
-            extends AsyncTask<LocalStorageWorker.MovieParams, Void, Void> {
-
-        static class MovieParams {
-            Context context;
-            List<Movie> responseMovies;
-            Integer requestPage;
-            String requestOrder;
-        }
-
-        @Override
-        protected Void doInBackground(MovieParams... movieParams) {
-            MovieParams movieParam = movieParams[0];
-
-            if (movieParam != null) {
-                ContentResolver resolver = movieParam.context.getContentResolver();
-                if (movieParam.requestPage == TheMovieDBService.LISTING_FIRST_PAGE) {
-                    resolver.delete(
-                            MovieEntry.CONTENT_URI,
-                            MovieDBHelper.buildSelection(MovieEntry.COLUMN_ORDER),
-                            new String[]{movieParam.requestOrder});
-                }
-                resolver.bulkInsert(
-                        MovieEntry.CONTENT_URI,
-                        MovieDBHelper.buildContentValues(
-                                movieParam.responseMovies,
-                                movieParam.requestOrder));
-            }
-            return null;
-        }
     }
 }

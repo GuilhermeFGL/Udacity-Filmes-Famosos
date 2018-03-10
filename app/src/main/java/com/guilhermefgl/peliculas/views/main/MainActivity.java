@@ -22,14 +22,17 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.guilhermefgl.peliculas.R;
-import com.guilhermefgl.peliculas.views.details.DetailsActivity;
 import com.guilhermefgl.peliculas.helpers.Constants;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
-import com.guilhermefgl.peliculas.services.loaders.MainLoader;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
+import com.guilhermefgl.peliculas.services.LocalStorageReader;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
+import com.guilhermefgl.peliculas.services.loaders.MainLoader;
 import com.guilhermefgl.peliculas.views.BaseActivity;
+import com.guilhermefgl.peliculas.views.details.DetailsActivity;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +41,7 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity
         implements MainAdapter.OnLoadMoreListener, View.OnClickListener,
         MainAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<MovieResponse> {
+        LoaderManager.LoaderCallbacks<MovieResponse>, LocalStorageReader.ReaderCallBack {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -106,6 +109,9 @@ public class MainActivity extends BaseActivity
                 currentOrder = orderState > 0 ? orderState : R.id.menu_main_popular;
             }
         }
+
+        new LocalStorageReader(this).execute(
+                new LocalStorageReader.MovieParams(this, getOrder()));
     }
 
     @Override
@@ -159,6 +165,41 @@ public class MainActivity extends BaseActivity
         requestMovies(mainAdapter.getNextPage());
     }
 
+    @NonNull
+    @Override
+    public Loader<MovieResponse> onCreateLoader(int id, @Nullable Bundle args) {
+        startRequest();
+        String order = args != null ? args.getString(MainLoader.BUNDLE_ORDER) : null;
+        Integer page = args != null ? args.getInt(MainLoader.BUNDLE_PAGE) : null;
+        return new MainLoader(this, order, page);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<MovieResponse> loader, MovieResponse data) {
+        if(data != null) {
+            mainAdapter.removeLoading();
+            mainAdapter.insertItems(data);
+            setErrorLayout(false);
+        } else {
+            setErrorLayout(true);
+        }
+        endRequest();
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<MovieResponse> loader) { }
+
+    @Override
+    public void onReadMovies(final ArrayList<Movie> movies) {
+        if (mainAdapter.getItemCount() == 0 && movies != null && !movies.isEmpty()) {
+            mainAdapter.insertItems(new MovieResponse() {{
+                setPage(1);
+                setTotalPages(1);
+                setResults(movies);
+            }});
+        }
+    }
+
     private void startRequest() {
         connectingPB.setVisibility(View.VISIBLE);
     }
@@ -187,8 +228,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void requestMovies(int page) {
-        String order = currentOrder == R.id.menu_main_popular ?
-                TheMovieDBService.ORDER_POPULAR : TheMovieDBService.ORDER_TOP_RATED;
+        String order = getOrder();
         Bundle queryBundle = new Bundle();
         queryBundle.putInt(MainLoader.BUNDLE_PAGE, page);
         queryBundle.putString(MainLoader.BUNDLE_ORDER, order);
@@ -200,27 +240,14 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    @NonNull
-    @Override
-    public Loader<MovieResponse> onCreateLoader(int id, @Nullable Bundle args) {
-        startRequest();
-        String order = args != null ? args.getString(MainLoader.BUNDLE_ORDER) : null;
-        Integer page = args != null ? args.getInt(MainLoader.BUNDLE_PAGE) : null;
-        return new MainLoader(this, order, page);
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<MovieResponse> loader, MovieResponse data) {
-        if(data != null) {
-            mainAdapter.removeLoading();
-            mainAdapter.insertItems(data);
-            setErrorLayout(false);
-        } else {
-            setErrorLayout(true);
+    private String getOrder() {
+        switch (currentOrder) {
+            case R.id.menu_main_popular:
+                return TheMovieDBService.ORDER_POPULAR;
+            case R.id.menu_main_top_rated:
+                return TheMovieDBService.ORDER_TOP_RATED;
+            default:
+                return TheMovieDBService.ORDER_POPULAR;
         }
-        endRequest();
     }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<MovieResponse> loader) { }
 }

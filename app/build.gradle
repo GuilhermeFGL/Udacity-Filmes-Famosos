@@ -26,13 +26,13 @@ android {
             dimension 'peliculas'
             buildConfigField 'Boolean', 'LOGGER_ENABLED', 'true'
             buildConfigField 'String', 'API_KEY', project.api_key
-            buildConfigField 'String', 'DB_NAME', 'debug.db'
+            buildConfigField 'String', 'DB_NAME', "\"debug.db\""
         }
         production {
             dimension 'peliculas'
             buildConfigField 'Boolean', 'LOGGER_ENABLED', 'false'
             buildConfigField 'String', 'API_KEY', project.api_key
-            buildConfigField 'String', 'DB_NAME', 'movies.db'
+            buildConfigField 'String', 'DB_NAME', "\"debug.db\""
         }
     }
 }
