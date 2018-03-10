@@ -1,4 +1,4 @@
-package com.guilhermefgl.peliculas.adapters;
+package com.guilhermefgl.peliculas.views.main;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Movie> movieList;
     private Integer currentPage, maxPages;
@@ -34,8 +34,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public MovieAdapter(RecyclerView recyclerView, final int spanCount,
-                        final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
+    public MainAdapter(RecyclerView recyclerView, final int spanCount,
+                       final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
         this.movieList = new ArrayList<>();
         this.onMovieItemClick = onMovieItemClick;
 
@@ -44,9 +44,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             @Override
             public int getSpanSize(int position) {
                 switch(getItemViewType(position)){
-                    case MovieAdapter.VIEW_TYPE_ITEM:
+                    case MainAdapter.VIEW_TYPE_ITEM:
                         return 1;
-                    case MovieAdapter.VIEW_TYPE_LOADING:
+                    case MainAdapter.VIEW_TYPE_LOADING:
                         return spanCount;
                     default:
                         return -1;

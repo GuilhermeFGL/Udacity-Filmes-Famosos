@@ -27,7 +27,7 @@ public final class TheMovieDBService {
     private static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
     private static final String WEB_URL = "https://www.themoviedb.org/movie/";
-    private static final String DATE_FORMATTER = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
     public static final String ORDER_TOP_RATED = "top_rated";
     public static final int LISTING_FIRST_PAGE = 1;
@@ -53,7 +53,7 @@ public final class TheMovieDBService {
     }
     static {
          gson = new GsonBuilder()
-                .setDateFormat(DATE_FORMATTER)
+                .setDateFormat(DATE_FORMAT)
                 .create();
     }
 

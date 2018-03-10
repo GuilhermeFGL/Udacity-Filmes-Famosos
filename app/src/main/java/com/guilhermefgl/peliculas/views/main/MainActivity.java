@@ -1,4 +1,4 @@
-package com.guilhermefgl.peliculas.activities;
+package com.guilhermefgl.peliculas.views.main;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,21 +22,22 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.guilhermefgl.peliculas.R;
-import com.guilhermefgl.peliculas.adapters.MovieAdapter;
+import com.guilhermefgl.peliculas.views.details.DetailsActivity;
 import com.guilhermefgl.peliculas.helpers.Constants;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
-import com.guilhermefgl.peliculas.loaders.MainLoader;
+import com.guilhermefgl.peliculas.services.loaders.MainLoader;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
+import com.guilhermefgl.peliculas.views.BaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity
-        implements MovieAdapter.OnLoadMoreListener, View.OnClickListener,
-        MovieAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener,
+        implements MainAdapter.OnLoadMoreListener, View.OnClickListener,
+        MainAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<MovieResponse> {
 
     @BindView(R.id.main_toolbar)
@@ -52,7 +53,7 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.error_conection_layout)
     LinearLayout errorConnectionLL;
 
-    private MovieAdapter movieAdapter;
+    private MainAdapter mainAdapter;
     private Snackbar errorSB;
     private Integer currentOrder;
 
@@ -76,8 +77,8 @@ public class MainActivity extends BaseActivity
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
         mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
-        movieAdapter = new MovieAdapter(mainRV, spanCount, this, this);
-        mainRV.setAdapter(movieAdapter);
+        mainAdapter = new MainAdapter(mainRV, spanCount, this, this);
+        mainRV.setAdapter(mainAdapter);
 
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
         mainSR.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -99,7 +100,7 @@ public class MainActivity extends BaseActivity
             currentOrder = R.id.menu_main_popular;
             requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
         } else {
-            movieAdapter.insertItems((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
+            mainAdapter.insertItems((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
             if (savedInstanceState.containsKey(STATE_ORDER)) {
                 int orderState = savedInstanceState.getInt(STATE_ORDER);
                 currentOrder = orderState > 0 ? orderState : R.id.menu_main_popular;
@@ -110,9 +111,9 @@ public class MainActivity extends BaseActivity
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelable(STATE_MOVIES, new MovieResponse(){{
-            setResults(movieAdapter.getItems());
-            setPage(movieAdapter.getCurrentPage());
-            setTotalPages(movieAdapter.getNextPage());
+            setResults(mainAdapter.getItems());
+            setPage(mainAdapter.getCurrentPage());
+            setTotalPages(mainAdapter.getNextPage());
         }});
         bundle.putInt(STATE_ORDER, currentOrder != null ? currentOrder : -1);
         super.onSaveInstanceState(bundle);
@@ -120,8 +121,8 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onLoadMore() {
-        movieAdapter.insertLoading();
-        requestMovies(movieAdapter.getNextPage());
+        mainAdapter.insertLoading();
+        requestMovies(mainAdapter.getNextPage());
     }
 
     @Override
@@ -155,7 +156,7 @@ public class MainActivity extends BaseActivity
 
     @OnClick(R.id.error_conection_action)
     public void actionRetry() {
-        requestMovies(movieAdapter.getNextPage());
+        requestMovies(mainAdapter.getNextPage());
     }
 
     private void startRequest() {
@@ -165,12 +166,12 @@ public class MainActivity extends BaseActivity
     private void endRequest() {
         mainSR.setRefreshing(false);
         connectingPB.setVisibility(View.GONE);
-        movieAdapter.setFinishLoading();
+        mainAdapter.setFinishLoading();
     }
 
     private void setErrorLayout(boolean hasError) {
         if (hasError) {
-            if (movieAdapter.getItemCount() > 0) {
+            if (mainAdapter.getItemCount() > 0) {
                 errorSB.show();
             } else {
                 errorConnectionLL.setVisibility(View.VISIBLE);
@@ -211,8 +212,8 @@ public class MainActivity extends BaseActivity
     @Override
     public void onLoadFinished(@NonNull Loader<MovieResponse> loader, MovieResponse data) {
         if(data != null) {
-            movieAdapter.removeLoading();
-            movieAdapter.insertItems(data);
+            mainAdapter.removeLoading();
+            mainAdapter.insertItems(data);
             setErrorLayout(false);
         } else {
             setErrorLayout(true);

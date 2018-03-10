@@ -1,4 +1,4 @@
-package com.guilhermefgl.peliculas.activities;
+package com.guilhermefgl.peliculas.views;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;

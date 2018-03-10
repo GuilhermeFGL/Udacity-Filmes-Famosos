@@ -1,4 +1,4 @@
-package com.guilhermefgl.peliculas.activities;
+package com.guilhermefgl.peliculas.views.details;
 
 import android.content.Intent;
 import android.os.Build;
@@ -18,6 +18,7 @@ import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
+import com.guilhermefgl.peliculas.views.BaseActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
