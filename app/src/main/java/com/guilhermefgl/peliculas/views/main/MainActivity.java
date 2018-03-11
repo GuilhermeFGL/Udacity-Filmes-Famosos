@@ -41,7 +41,8 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity
         implements MainAdapter.OnLoadMoreListener, View.OnClickListener,
         MainAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<MovieResponse>, LocalStorageReader.ReaderCallBack {
+        LoaderManager.LoaderCallbacks<MovieResponse>, LocalStorageReader.ReaderCallBack,
+        SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -78,18 +79,14 @@ public class MainActivity extends BaseActivity
         getSupportLoaderManager().initLoader(MainLoader.LOADER_ID, null, this);
 
         int spanCount = getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
+                == Configuration.ORIENTATION_PORTRAIT ?
+                MainAdapter.GRID_PORTRAIT : MainAdapter.GRID_LANDSCAPE;
         mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
         mainAdapter = new MainAdapter(mainRV, spanCount, this, this);
         mainRV.setAdapter(mainAdapter);
 
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
-        mainSR.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
-            }
-        });
+        mainSR.setOnRefreshListener(this);
 
         orderBNV.setOnNavigationItemSelectedListener(this);
 
@@ -109,9 +106,6 @@ public class MainActivity extends BaseActivity
                 currentOrder = orderState > 0 ? orderState : R.id.menu_main_popular;
             }
         }
-
-        new LocalStorageReader(this).execute(
-                new LocalStorageReader.MovieParams(this, getOrder()));
     }
 
     @Override
@@ -129,6 +123,18 @@ public class MainActivity extends BaseActivity
     public void onLoadMore() {
         mainAdapter.insertLoading();
         requestMovies(mainAdapter.getNextPage());
+    }
+
+    @Override
+    public void onRefresh() {
+        requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        currentOrder = item.getItemId();
+        requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
+        return true;
     }
 
     @Override
@@ -151,13 +157,6 @@ public class MainActivity extends BaseActivity
     @Override
     public void onClick(View v) {
         actionRetry();
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        currentOrder = item.getItemId();
-        requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
-        return true;
     }
 
     @OnClick(R.id.error_conection_action)
@@ -191,12 +190,13 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onReadMovies(final ArrayList<Movie> movies) {
-        if (mainAdapter.getItemCount() == 0 && movies != null && !movies.isEmpty()) {
+        if (movies != null && !movies.isEmpty()) {
             mainAdapter.insertItems(new MovieResponse() {{
-                setPage(1);
-                setTotalPages(1);
+                setPage(TheMovieDBService.LISTING_FIRST_PAGE);
+                setTotalPages(TheMovieDBService.LISTING_FIRST_PAGE);
                 setResults(movies);
             }});
+            setErrorLayout(false);
         }
     }
 
@@ -212,7 +212,7 @@ public class MainActivity extends BaseActivity
 
     private void setErrorLayout(boolean hasError) {
         if (hasError) {
-            if (mainAdapter.getItemCount() > 0) {
+            if (!mainAdapter.isEmpty()) {
                 errorSB.show();
             } else {
                 errorConnectionLL.setVisibility(View.VISIBLE);
@@ -229,6 +229,12 @@ public class MainActivity extends BaseActivity
 
     private void requestMovies(int page) {
         String order = getOrder();
+
+        if (page == TheMovieDBService.LISTING_FIRST_PAGE) {
+            new LocalStorageReader(this).execute(
+                    new LocalStorageReader.MovieParams(this, order));
+        }
+
         Bundle queryBundle = new Bundle();
         queryBundle.putInt(MainLoader.BUNDLE_PAGE, page);
         queryBundle.putString(MainLoader.BUNDLE_ORDER, order);

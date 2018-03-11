@@ -63,7 +63,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         return contentValues;
     }
 
-    public static ContentValues buildContentValue(Movie movie, String order) {
+    private static ContentValues buildContentValue(Movie movie, String order) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieEntry.COLUMN_API_ID, movie.getMovieId());
         contentValues.put(MovieEntry.COLUMN_TITLE, movie.getTitle());

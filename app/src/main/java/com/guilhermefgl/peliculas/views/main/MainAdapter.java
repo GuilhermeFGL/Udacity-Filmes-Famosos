@@ -31,6 +31,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VISIBLE_THRESHOLD = 4;
     private int lastVisibleItem, totalItemCount;
 
+    static final int GRID_PORTRAIT = 2;
+    static final int GRID_LANDSCAPE = 4;
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
@@ -53,6 +55,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             }
         });
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -99,6 +102,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemCount() {
         return movieList != null ? movieList.size() : 0;
+    }
+
+    boolean isEmpty() {
+        return getItemCount() == 0;
     }
 
     int getCurrentPage() {
