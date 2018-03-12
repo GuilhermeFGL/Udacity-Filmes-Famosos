@@ -17,6 +17,7 @@ import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -143,9 +144,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     void removeLoading() {
-        if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
-            movieList.remove(movieList.size() - 1);
+        if (movieList.removeAll(Collections.singleton(null)) ) {
             notifyItemRemoved(movieList.size());
         }
     }

@@ -43,7 +43,8 @@
         <provider
             android:name=".models.provider.MovieContentProvider"
             android:authorities="com.guilhermefgl.peliculas"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

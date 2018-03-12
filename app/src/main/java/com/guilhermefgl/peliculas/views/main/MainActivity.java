@@ -196,7 +196,8 @@ public class MainActivity extends BaseActivity
                 setTotalPages(TheMovieDBService.LISTING_FIRST_PAGE);
                 setResults(movies);
             }});
-            setErrorLayout(false);
+            errorConnectionLL.setVisibility(View.GONE);
+            mainRV.setVisibility(View.VISIBLE);
         }
     }
 
