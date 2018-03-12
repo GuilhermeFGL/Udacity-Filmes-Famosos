@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/menu_main_popular"
+        icon="@drawable/ic_views"
+        title="@string/menu_main_popular" />
+    <tab
+        id="@+id/menu_main_top_rated"
+        icon="@drawable/ic_star"
+        title="@string/menu_main_top_rated" />
+</tabs>

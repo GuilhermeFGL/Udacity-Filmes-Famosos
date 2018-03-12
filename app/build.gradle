@@ -52,9 +52,11 @@ dependencies {
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.roughike:bottom-bar:2.3.1'
+    implementation files('lib/SQLiteStudioRemote.jar')
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation files('lib/SQLiteStudioRemote.jar')
 }

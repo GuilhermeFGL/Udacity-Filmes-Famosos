@@ -131,8 +131,12 @@ public class Movie implements Parcelable{
 
     public static ArrayList<Movie> createFromCursor(final Cursor cursor) {
         ArrayList<Movie> movies = new ArrayList<>();
-        cursor.moveToFirst();
-        while (cursor.moveToNext()) {
+
+        if (!cursor.moveToFirst()) {
+            return movies;
+        }
+
+        do {
             movies.add(new Movie() {{
                 setMovieId(cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_API_ID)));
                 setTitle(cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_TITLE)));
@@ -150,7 +154,8 @@ public class Movie implements Parcelable{
                                     cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_DATE))));
                 } catch (ParseException ignored) { }
             }});
-        }
+        } while (cursor.moveToNext());
+
         return movies;
     }
 

@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
@@ -31,6 +30,8 @@ import com.guilhermefgl.peliculas.services.TheMovieDBService;
 import com.guilhermefgl.peliculas.services.loaders.MainLoader;
 import com.guilhermefgl.peliculas.views.BaseActivity;
 import com.guilhermefgl.peliculas.views.details.DetailsActivity;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
 
 import java.util.ArrayList;
 
@@ -40,9 +41,8 @@ import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity
         implements MainAdapter.OnLoadMoreListener, View.OnClickListener,
-        MainAdapter.OnMovieItemClick, BottomNavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<MovieResponse>, LocalStorageReader.ReaderCallBack,
-        SwipeRefreshLayout.OnRefreshListener {
+        MainAdapter.OnMovieItemClick, LoaderManager.LoaderCallbacks<MovieResponse>,
+        LocalStorageReader.ReaderCallBack, SwipeRefreshLayout.OnRefreshListener, OnTabSelectListener {
 
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
@@ -52,10 +52,10 @@ public class MainActivity extends BaseActivity
     SwipeRefreshLayout mainSR;
     @BindView(R.id.main_list)
     RecyclerView mainRV;
-    @BindView(R.id.main_navigation)
-    BottomNavigationView orderBNV;
     @BindView(R.id.error_conection_layout)
     LinearLayout errorConnectionLL;
+    @BindView(R.id.main_navigation)
+    BottomBar navigationBB;
 
     private MainAdapter mainAdapter;
     private Snackbar errorSB;
@@ -88,10 +88,10 @@ public class MainActivity extends BaseActivity
         mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
         mainSR.setOnRefreshListener(this);
 
-        orderBNV.setOnNavigationItemSelectedListener(this);
+        navigationBB.setOnTabSelectListener(this);
 
         errorSB = SnackBarHelper.make(this,
-                findViewById(R.id.main_layout),
+                findViewById(R.id.main_navigation),
                 R.string.error_connection_label,
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.error_connection_action, this);
@@ -131,10 +131,9 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        currentOrder = item.getItemId();
+    public void onTabSelected(int tabId) {
+        currentOrder = tabId;
         requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
-        return true;
     }
 
     @Override
