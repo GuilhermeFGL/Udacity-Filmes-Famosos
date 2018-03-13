@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +53,10 @@ public class DetailsActivity extends BaseActivity {
     TextView dateTV;
     @BindView(R.id.details_overview)
     TextView overviewTV;
+    @BindView(R.id.details_videos)
+    RecyclerView videosRV;
+    @BindView(R.id.details_reviews)
+    RecyclerView reviewsRV;
 
     private Movie movie;
     private final SimpleDateFormat DATE_FORMATTER
@@ -120,6 +125,9 @@ public class DetailsActivity extends BaseActivity {
             case R.id.menu_details_share:
                 shareMovie();
                 return true;
+            case R.id.menu_details_favorite:
+                toggleFavoriteMovie(item);
+                return true;
             case android.R.id.home:
                 supportFinishAfterTransition();
                 return true;
@@ -146,6 +154,9 @@ public class DetailsActivity extends BaseActivity {
                     R.string.error_share_label,
                     Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    private void toggleFavoriteMovie(MenuItem item) {
     }
 
     private void requestVideos(Integer movieId) {

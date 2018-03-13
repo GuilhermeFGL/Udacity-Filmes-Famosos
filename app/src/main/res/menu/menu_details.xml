@@ -4,6 +4,12 @@
     tools:context="com.guilhermefgl.peliculas.views.details.DetailsActivity">
 
     <item
+        android:id="@+id/menu_details_favorite"
+        android:icon="@drawable/ic_favorite_empty"
+        android:title="@string/menu_details_favorite"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/menu_details_share"
         android:icon="@drawable/ic_share"
         android:title="@string/menu_details_share"

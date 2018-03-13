@@ -20,9 +20,12 @@
     <string name="details_views_desc">movie views</string>
     <string name="details_date_label">Release date:</string>
     <string name="details_overview_label">Overview:</string>
+    <string name="details_videos_label">Trailers:</string>
+    <string name="details_reviews_label">Reviews:</string>
     <string name="details_intent_shre_title">Share a movie</string>
     <string name="details_transition_poster">transition_poster</string>
     <string name="menu_details_share">share</string>
+    <string name="menu_details_favorite">favorite</string>
 
     <string name="lore">
         Lorem ipsum dolor sit amet, duo viderer maluisset definitionem ne, id malis elaboraret pri. Ea eum posse clita. Et nostrum omittam ius, no oratio tollit accusata vix, et fugit affert regione vel. Quas natum dicat ex sed, mei at omittantur suscipiantur. Suas labitur mel ea.
