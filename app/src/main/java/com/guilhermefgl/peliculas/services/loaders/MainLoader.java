@@ -41,7 +41,7 @@ public class MainLoader extends AsyncTaskLoader<MovieResponse> {
 
         try {
             final MovieResponse response =
-                    TheMovieDBService.getClient().list(order, page).execute().body();
+                    TheMovieDBService.getClient().listMovies(order, page).execute().body();
 
             if (response != null) {
                 new LocalStorageWriter().execute(

@@ -3,6 +3,7 @@ package com.guilhermefgl.peliculas.views.details;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,6 +18,8 @@ import com.guilhermefgl.peliculas.helpers.Constants;
 import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
 import com.guilhermefgl.peliculas.models.Movie;
+import com.guilhermefgl.peliculas.models.ReviewResponse;
+import com.guilhermefgl.peliculas.models.VideoResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 import com.guilhermefgl.peliculas.views.BaseActivity;
 
@@ -25,6 +28,9 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailsActivity extends BaseActivity {
 
@@ -96,6 +102,9 @@ public class DetailsActivity extends BaseActivity {
             PicassoHelper.loadImage(this,
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
                     posterIV);
+
+            requestVideos(movie.getMovieId());
+            requestReviews(movie.getMovieId());
         }
     }
 
@@ -137,5 +146,35 @@ public class DetailsActivity extends BaseActivity {
                     R.string.error_share_label,
                     Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    private void requestVideos(Integer movieId) {
+        TheMovieDBService.getClient().listVideos(movieId).enqueue(new Callback<VideoResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<VideoResponse> call,
+                                   @NonNull Response<VideoResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<VideoResponse> call, @NonNull Throwable t) {
+
+            }
+        });
+    }
+
+    private void requestReviews(Integer movieId) {
+        TheMovieDBService.getClient().listReviews(movieId).enqueue(new Callback<ReviewResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewResponse> call,
+                                   @NonNull Response<ReviewResponse> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
+
+            }
+        });
     }
 }
