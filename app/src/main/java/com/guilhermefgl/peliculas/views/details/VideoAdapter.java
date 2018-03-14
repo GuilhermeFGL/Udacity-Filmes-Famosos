@@ -46,6 +46,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return videos != null ? videos.size() : 0;
     }
 
+    boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
     void setItems(List<Video> videos) {
         this.videos = videos;
         notifyDataSetChanged();

@@ -9,7 +9,6 @@
         android:id="@+id/item_review_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
         android:textColor="@color/secondary_text"
         tool:text="Author Name"/>
 

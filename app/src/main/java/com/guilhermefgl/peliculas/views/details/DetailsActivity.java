@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -32,6 +34,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,9 +63,13 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     RecyclerView videosRV;
     @BindView(R.id.details_reviews)
     RecyclerView reviewsRV;
+    @BindView(R.id.details_videos_loading)
+    ProgressBar videosLoadingPB;
+    @BindView(R.id.details_reviews_loading)
+    ProgressBar reviewsLoadingPB;
 
     private VideoAdapter videoAdapter;
-
+    private ReviewAdapter reviewAdapter;
     private Movie movie;
     private final SimpleDateFormat DATE_FORMATTER
             = new SimpleDateFormat(Constants.DATE_FORMATTER, Locale.getDefault());
@@ -97,7 +104,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             }
         }
 
-        if (movie == null) {
+        if (movie == null || movie.getMovieId() == null) {
             finish();
         } else {
             titleTV.setText(movie.getTitle());
@@ -114,12 +121,20 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                     posterIV, R.mipmap.movie_background, R.mipmap.error_background);
 
             videoAdapter = new VideoAdapter(null, this);
-            videosRV.setLayoutManager(new LinearLayoutManager(this,
-                    LinearLayoutManager.HORIZONTAL, false));
+            videosRV.setLayoutManager(new LinearLayoutManager(
+                    this, LinearLayoutManager.HORIZONTAL, false));
             videosRV.setAdapter(videoAdapter);
 
-            requestVideos(movie.getMovieId());
-            requestReviews(movie.getMovieId());
+            reviewAdapter = new ReviewAdapter();
+            reviewsRV.setLayoutManager(new LinearLayoutManager(
+                    this, LinearLayoutManager.VERTICAL, false));
+            reviewsRV.setAdapter(reviewAdapter);
+            reviewsRV.setNestedScrollingEnabled(false);
+            reviewsRV.setHasFixedSize(false);
+            reviewsRV.addItemDecoration(
+                    new DividerItemDecoration(reviewsRV.getContext(), LinearLayoutManager.VERTICAL));
+
+            requestVideosAndReviews();
         }
     }
 
@@ -159,6 +174,12 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
         }
     }
 
+    @OnClick(R.id.error_connection_action)
+    public void requestVideosAndReviews() {
+        requestVideos(movie.getMovieId());
+        requestReviews(movie.getMovieId());
+    }
+
     private void shareMovie() {
         if (movie == null) {
             return;
@@ -184,35 +205,57 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
         // TODO
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void requestVideos(Integer movieId) {
+        videosLoadingPB.setVisibility(View.VISIBLE);
         TheMovieDBService.getClient().listVideos(movieId).enqueue(new Callback<VideoResponse>() {
             @Override
             public void onResponse(@NonNull Call<VideoResponse> call,
                                    @NonNull Response<VideoResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                videosLoadingPB.setVisibility(View.GONE);
+                if (response.isSuccessful()
+                        && response.body() != null && !response.body().getResults().isEmpty()) {
                     videoAdapter.setItems(response.body().getResults());
+                    setErrorLayout(R.id.details_trailer_error_layout, false);
+                } else {
+                    setErrorLayout(R.id.details_trailer_error_layout, videoAdapter.isEmpty());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<VideoResponse> call, @NonNull Throwable t) {
-
+                videosLoadingPB.setVisibility(View.GONE);
+                setErrorLayout(R.id.details_trailer_error_layout, videoAdapter.isEmpty());
             }
         });
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void requestReviews(Integer movieId) {
+        reviewsLoadingPB.setVisibility(View.VISIBLE);
         TheMovieDBService.getClient().listReviews(movieId).enqueue(new Callback<ReviewResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReviewResponse> call,
                                    @NonNull Response<ReviewResponse> response) {
-
+                reviewsLoadingPB.setVisibility(View.GONE);
+                if (response.isSuccessful()
+                        && response.body() != null && !response.body().getResults().isEmpty()) {
+                    reviewAdapter.setItems(response.body().getResults());
+                    setErrorLayout(R.id.details_review_error_layout, false);
+                } else {
+                    setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
-
+                reviewsLoadingPB.setVisibility(View.GONE);
+                setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
             }
         });
+    }
+
+    private void setErrorLayout(int idLayout, boolean hasError) {
+        findViewById(idLayout).setVisibility(hasError ? View.VISIBLE : View.GONE);
     }
 }

@@ -161,42 +161,26 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:background="@color/divider" />
+                        android:background="?android:attr/listDivider" />
 
-                    <TextView
-                        android:id="@+id/details_videos_label"
+                    <include
+                        android:id="@+id/details_videos_layout"
                         android:layout_below="@+id/details_divider_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/details_videos_label" />
+                        layout="@layout/layout_video_list" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/details_videos"
-                        android:layout_below="@+id/details_videos_label"
+                    <include
+                        android:id="@+id/details_reviews_layout"
+                        android:layout_below="@+id/details_videos_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_video" />
-
-                    <TextView
-                        android:id="@+id/details_reviews_label"
-                        android:layout_below="@+id/details_videos"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/details_reviews_label" />
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/details_reviews"
-                        android:layout_below="@+id/details_reviews_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:listitem="@layout/item_review" />
+                        layout="@layout/layout_review_list" />
 
                 </RelativeLayout>
 
             </android.support.v7.widget.CardView>
+
         </RelativeLayout>
 
     </android.support.v4.widget.NestedScrollView>
