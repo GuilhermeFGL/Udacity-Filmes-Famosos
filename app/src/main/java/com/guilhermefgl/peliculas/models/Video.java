@@ -7,7 +7,8 @@ public class Video {
 
     private String id;
     private String key;
-    private String site;
+    @SerializedName("name")
+    private String title;
 
     public String getId() {
         return id;
@@ -25,11 +26,11 @@ public class Video {
         this.key = key;
     }
 
-    public String getSite() {
-        return site;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSite(String site) {
-        this.site = site;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

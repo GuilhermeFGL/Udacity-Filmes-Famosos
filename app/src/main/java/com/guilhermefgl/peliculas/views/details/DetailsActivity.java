@@ -1,10 +1,12 @@
 package com.guilhermefgl.peliculas.views.details;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
 import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.ReviewResponse;
+import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.models.VideoResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 import com.guilhermefgl.peliculas.views.BaseActivity;
@@ -33,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsActivity extends BaseActivity {
+public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVideoItemClick {
 
     @BindView(R.id.details_toolbar)
     Toolbar toolbar;
@@ -57,6 +60,8 @@ public class DetailsActivity extends BaseActivity {
     RecyclerView videosRV;
     @BindView(R.id.details_reviews)
     RecyclerView reviewsRV;
+
+    private VideoAdapter videoAdapter;
 
     private Movie movie;
     private final SimpleDateFormat DATE_FORMATTER
@@ -106,7 +111,12 @@ public class DetailsActivity extends BaseActivity {
             }
             PicassoHelper.loadImage(this,
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                    posterIV);
+                    posterIV, R.mipmap.movie_background, R.mipmap.error_background);
+
+            videoAdapter = new VideoAdapter(null, this);
+            videosRV.setLayoutManager(new LinearLayoutManager(this,
+                    LinearLayoutManager.HORIZONTAL, false));
+            videosRV.setAdapter(videoAdapter);
 
             requestVideos(movie.getMovieId());
             requestReviews(movie.getMovieId());
@@ -135,6 +145,20 @@ public class DetailsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onVideoItemClick(Video video) {
+        try {
+            startActivity(new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(TheMovieDBService.buildYoutubeUrl(video.getKey()))));
+        } catch (Exception e) {
+            SnackBarHelper.make(this,
+                    findViewById(R.id.details_layout),
+                    R.string.error_open_trailer,
+                    Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
     private void shareMovie() {
         if (movie == null) {
             return;
@@ -157,6 +181,7 @@ public class DetailsActivity extends BaseActivity {
     }
 
     private void toggleFavoriteMovie(MenuItem item) {
+        // TODO
     }
 
     private void requestVideos(Integer movieId) {
@@ -164,7 +189,9 @@ public class DetailsActivity extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<VideoResponse> call,
                                    @NonNull Response<VideoResponse> response) {
-
+                if (response.isSuccessful() && response.body() != null) {
+                    videoAdapter.setItems(response.body().getResults());
+                }
             }
 
             @Override

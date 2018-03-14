@@ -28,7 +28,8 @@ public final class TheMovieDBService {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
-    private static final String IMAGE_YOUTUBE_BASE_URL = "https://img.youtube.com/vi/%s/0.jpg";
+    private static final String IMAGE_YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
+    private static final String IMAGE_YOUTUBE_THUMBNAIL_BASE_URL = "https://img.youtube.com/vi/%s/0.jpg";
     private static final String WEB_URL = "https://www.themoviedb.org/movie/";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
@@ -77,8 +78,13 @@ public final class TheMovieDBService {
     }
 
     @NonNull
+    public static String buildYoutubeUrl(String youtubeId) {
+        return IMAGE_YOUTUBE_BASE_URL.concat(youtubeId);
+    }
+
+    @NonNull
     public static String buildYoutubeThumbnailUrl(String youtubeId) {
-        return String.format(IMAGE_YOUTUBE_BASE_URL, youtubeId);
+        return String.format(IMAGE_YOUTUBE_THUMBNAIL_BASE_URL, youtubeId);
     }
 
     @NonNull
