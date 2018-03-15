@@ -27,7 +27,7 @@ import com.guilhermefgl.peliculas.models.Movie;
 import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.LocalStorageReader;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
-import com.guilhermefgl.peliculas.services.loaders.MainLoader;
+import com.guilhermefgl.peliculas.services.loaders.MovieLoader;
 import com.guilhermefgl.peliculas.views.BaseActivity;
 import com.guilhermefgl.peliculas.views.details.DetailsActivity;
 import com.roughike.bottombar.BottomBar;
@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        getSupportLoaderManager().initLoader(MainLoader.LOADER_ID, null, this);
+        getSupportLoaderManager().initLoader(MovieLoader.LOADER_ID, null, this);
 
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ?
@@ -167,9 +167,9 @@ public class MainActivity extends BaseActivity
     @Override
     public Loader<MovieResponse> onCreateLoader(int id, @Nullable Bundle args) {
         startRequest();
-        String order = args != null ? args.getString(MainLoader.BUNDLE_ORDER) : null;
-        Integer page = args != null ? args.getInt(MainLoader.BUNDLE_PAGE) : null;
-        return new MainLoader(this, order, page);
+        String order = args != null ? args.getString(MovieLoader.BUNDLE_ORDER) : null;
+        Integer page = args != null ? args.getInt(MovieLoader.BUNDLE_PAGE) : null;
+        return new MovieLoader(this, order, page);
     }
 
     @Override
@@ -236,13 +236,13 @@ public class MainActivity extends BaseActivity
         }
 
         Bundle queryBundle = new Bundle();
-        queryBundle.putInt(MainLoader.BUNDLE_PAGE, page);
-        queryBundle.putString(MainLoader.BUNDLE_ORDER, order);
+        queryBundle.putInt(MovieLoader.BUNDLE_PAGE, page);
+        queryBundle.putString(MovieLoader.BUNDLE_ORDER, order);
         LoaderManager loaderManager = getSupportLoaderManager();
-        if (loaderManager.getLoader(MainLoader.LOADER_ID) == null) {
-            loaderManager.initLoader(MainLoader.LOADER_ID, queryBundle, this);
+        if (loaderManager.getLoader(MovieLoader.LOADER_ID) == null) {
+            loaderManager.initLoader(MovieLoader.LOADER_ID, queryBundle, this);
         } else {
-            loaderManager.restartLoader(MainLoader.LOADER_ID, queryBundle, this);
+            loaderManager.restartLoader(MovieLoader.LOADER_ID, queryBundle, this);
         }
     }
 

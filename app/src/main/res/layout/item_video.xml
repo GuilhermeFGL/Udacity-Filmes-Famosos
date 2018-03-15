@@ -13,7 +13,7 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         tool:src="@mipmap/youtube_thumbnail_background"
-        android:contentDescription="@string/item_details_trailer_thumbnail" />
+        android:contentDescription="@string/item_details_video_thumbnail" />
 
     <TextView
         android:id="@+id/item_video_title"

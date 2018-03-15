@@ -5,7 +5,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +30,8 @@ import com.guilhermefgl.peliculas.models.ReviewResponse;
 import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.models.VideoResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
+import com.guilhermefgl.peliculas.services.loaders.ReviewLoader;
+import com.guilhermefgl.peliculas.services.loaders.VideoLoader;
 import com.guilhermefgl.peliculas.views.BaseActivity;
 
 import java.text.SimpleDateFormat;
@@ -35,9 +40,6 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVideoItemClick {
 
@@ -71,6 +73,8 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     private VideoAdapter videoAdapter;
     private ReviewAdapter reviewAdapter;
     private Movie movie;
+    private LoaderManager.LoaderCallbacks<VideoResponse> videoLoaderCallback;
+    private LoaderManager.LoaderCallbacks<ReviewResponse> reviewLoaderCallback;
     private final SimpleDateFormat DATE_FORMATTER
             = new SimpleDateFormat(Constants.DATE_FORMATTER, Locale.getDefault());
 
@@ -104,6 +108,100 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             }
         }
 
+        setupLoaders();
+        setupView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_details_share:
+                shareMovie();
+                return true;
+            case R.id.menu_details_favorite:
+                toggleFavoriteMovie(item);
+                return true;
+            case android.R.id.home:
+                supportFinishAfterTransition();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onVideoItemClick(Video video) {
+        try {
+            startActivity(new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(TheMovieDBService.buildYoutubeUrl(video.getKey()))));
+        } catch (Exception e) {
+            SnackBarHelper.make(this,
+                    findViewById(R.id.details_layout),
+                    R.string.error_open_movie,
+                    Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    @OnClick(R.id.error_connection_action)
+    public void requestVideosAndReviews() {
+        requestVideos(movie.getMovieId());
+        requestReviews(movie.getMovieId());
+    }
+
+    private void setupLoaders() {
+        videoLoaderCallback = new LoaderManager.LoaderCallbacks<VideoResponse>() {
+            @NonNull
+            @Override
+            public Loader<VideoResponse> onCreateLoader(int id, @Nullable Bundle args) {
+                videosLoadingPB.setVisibility(View.VISIBLE);
+                Integer movieId = args != null ? args.getInt(VideoLoader.BUNDLE_ID) : null;
+                return new VideoLoader(DetailsActivity.this, movieId);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<VideoResponse> loader, VideoResponse data) {
+                videosLoadingPB.setVisibility(View.GONE);
+                if(data != null && data.getResults() != null && !data.getResults().isEmpty()) {
+                    videoAdapter.setItems(data.getResults());
+                }
+                setErrorLayout(R.id.details_video_error_layout, videoAdapter.isEmpty());
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<VideoResponse> loader) { }
+        };
+        reviewLoaderCallback = new LoaderManager.LoaderCallbacks<ReviewResponse>() {
+            @NonNull
+            @Override
+            public Loader<ReviewResponse> onCreateLoader(int id, @Nullable Bundle args) {
+                reviewsLoadingPB.setVisibility(View.VISIBLE);
+                Integer movieId = args != null ? args.getInt(ReviewLoader.BUNDLE_ID) : null;
+                return new ReviewLoader(DetailsActivity.this, movieId);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<ReviewResponse> loader, ReviewResponse data) {
+                reviewsLoadingPB.setVisibility(View.GONE);
+                if(data != null && data.getResults() != null && !data.getResults().isEmpty()) {
+                    reviewAdapter.setItems(data.getResults());
+                }
+                setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<ReviewResponse> loader) { }
+        };
+        getSupportLoaderManager().initLoader(VideoLoader.LOADER_ID, null, videoLoaderCallback);
+        getSupportLoaderManager().initLoader(ReviewLoader.LOADER_ID, null, reviewLoaderCallback);
+    }
+
+    private void setupView() {
         if (movie == null || movie.getMovieId() == null) {
             finish();
         } else {
@@ -138,48 +236,6 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_details, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_details_share:
-                shareMovie();
-                return true;
-            case R.id.menu_details_favorite:
-                toggleFavoriteMovie(item);
-                return true;
-            case android.R.id.home:
-                supportFinishAfterTransition();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onVideoItemClick(Video video) {
-        try {
-            startActivity(new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse(TheMovieDBService.buildYoutubeUrl(video.getKey()))));
-        } catch (Exception e) {
-            SnackBarHelper.make(this,
-                    findViewById(R.id.details_layout),
-                    R.string.error_open_trailer,
-                    Snackbar.LENGTH_SHORT).show();
-        }
-    }
-
-    @OnClick(R.id.error_connection_action)
-    public void requestVideosAndReviews() {
-        requestVideos(movie.getMovieId());
-        requestReviews(movie.getMovieId());
-    }
-
     private void shareMovie() {
         if (movie == null) {
             return;
@@ -207,52 +263,26 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
 
     @SuppressWarnings("ConstantConditions")
     private void requestVideos(Integer movieId) {
-        videosLoadingPB.setVisibility(View.VISIBLE);
-        TheMovieDBService.getClient().listVideos(movieId).enqueue(new Callback<VideoResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<VideoResponse> call,
-                                   @NonNull Response<VideoResponse> response) {
-                videosLoadingPB.setVisibility(View.GONE);
-                if (response.isSuccessful()
-                        && response.body() != null && !response.body().getResults().isEmpty()) {
-                    videoAdapter.setItems(response.body().getResults());
-                    setErrorLayout(R.id.details_trailer_error_layout, false);
-                } else {
-                    setErrorLayout(R.id.details_trailer_error_layout, videoAdapter.isEmpty());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<VideoResponse> call, @NonNull Throwable t) {
-                videosLoadingPB.setVisibility(View.GONE);
-                setErrorLayout(R.id.details_trailer_error_layout, videoAdapter.isEmpty());
-            }
-        });
+        Bundle queryBundle = new Bundle();
+        queryBundle.putInt(VideoLoader.BUNDLE_ID, movieId);
+        LoaderManager loaderManager = getSupportLoaderManager();
+        if (loaderManager.getLoader(VideoLoader.LOADER_ID) == null) {
+            loaderManager.initLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
+        } else {
+            loaderManager.restartLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
     private void requestReviews(Integer movieId) {
-        reviewsLoadingPB.setVisibility(View.VISIBLE);
-        TheMovieDBService.getClient().listReviews(movieId).enqueue(new Callback<ReviewResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReviewResponse> call,
-                                   @NonNull Response<ReviewResponse> response) {
-                reviewsLoadingPB.setVisibility(View.GONE);
-                if (response.isSuccessful()
-                        && response.body() != null && !response.body().getResults().isEmpty()) {
-                    reviewAdapter.setItems(response.body().getResults());
-                    setErrorLayout(R.id.details_review_error_layout, false);
-                } else {
-                    setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
-                reviewsLoadingPB.setVisibility(View.GONE);
-                setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
-            }
-        });
+        Bundle queryBundle = new Bundle();
+        queryBundle.putInt(ReviewLoader.BUNDLE_ID, movieId);
+        LoaderManager loaderManager = getSupportLoaderManager();
+        if (loaderManager.getLoader(ReviewLoader.LOADER_ID) == null) {
+            loaderManager.initLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
+        } else {
+            loaderManager.restartLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
+        }
     }
 
     private void setErrorLayout(int idLayout, boolean hasError) {

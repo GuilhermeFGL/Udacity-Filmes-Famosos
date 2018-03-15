@@ -30,7 +30,7 @@
         tools:listitem="@layout/item_video" />
 
     <include
-        android:id="@+id/details_trailer_error_layout"
+        android:id="@+id/details_video_error_layout"
         layout="@layout/layout_error_connection_list" />
 
 </RelativeLayout>

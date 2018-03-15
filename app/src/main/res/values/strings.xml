@@ -6,7 +6,7 @@
     <string name="error_connection_simple_label">No Internet connection</string>
     <string name="error_connection_action">try again</string>
     <string name="error_share_label">Could not share</string>
-    <string name="error_open_trailer">Could not open trailer</string>
+    <string name="error_open_movie">Could not open trailer</string>
 
     <!-- MAIN ACTIVITY -->
     <string name="item_movie_thumbnail">movie thumbnail</string>
@@ -16,7 +16,7 @@
     <string name="menu_main_top_rated">Order by Top Rated</string>
 
     <!-- DETAILS ACTIVITY -->
-    <string name="item_details_trailer_thumbnail">trailer thumbnail</string>
+    <string name="item_details_video_thumbnail">trailer thumbnail</string>
     <string name="details_image_desc">movie poster</string>
     <string name="details_adult_label">adult</string>
     <string name="details_views_desc">movie views</string>

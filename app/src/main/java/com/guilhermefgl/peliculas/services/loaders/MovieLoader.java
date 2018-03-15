@@ -7,17 +7,17 @@ import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.LocalStorageWriter;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
-public class MainLoader extends AsyncTaskLoader<MovieResponse> {
+public class MovieLoader extends AsyncTaskLoader<MovieResponse> {
 
     public static final Integer LOADER_ID = 1001;
-    public static final String BUNDLE_ORDER = MainLoader.class.getName().concat(".BUNDLE_ORDER");
-    public static final String BUNDLE_PAGE = MainLoader.class.getName().concat(".BUNDLE_PAGE");
+    public static final String BUNDLE_ORDER = MovieLoader.class.getName().concat(".BUNDLE_ORDER");
+    public static final String BUNDLE_PAGE = MovieLoader.class.getName().concat(".BUNDLE_PAGE");
 
     private MovieResponse moviesCached;
     private String order;
     private Integer page;
 
-    public MainLoader(Context context, String order, Integer page) {
+    public MovieLoader(Context context, String order, Integer page) {
         super(context);
         this.order = order;
         this.page = page;
