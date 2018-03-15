@@ -7,8 +7,7 @@
     android:layout_marginTop="16dp"
     android:padding="8dp"
     android:orientation="horizontal"
-    android:gravity="center"
-    android:visibility="gone">
+    android:gravity="center">
 
     <ImageView
         android:layout_width="24dp"
@@ -24,10 +23,11 @@
         android:text="@string/error_connection_simple_label" />
 
     <Button
-        android:id="@+id/error_connection_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/error_connection_action"
+        android:clickable="false"
+        android:focusable="false"
         style="?android:attr/borderlessButtonStyle" />
 
 </LinearLayout>

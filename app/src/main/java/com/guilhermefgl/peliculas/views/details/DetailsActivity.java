@@ -121,7 +121,8 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
 
             if (savedInstanceState == null || !savedInstanceState.containsKey(STATE_VIDEOS)
                     || !savedInstanceState.containsKey(STATE_REVIEWS)) {
-                requestVideosAndReviews();
+                requestVideos();
+                requestReviews();
             } else {
                 if (savedInstanceState.containsKey(STATE_VIDEOS)) {
                     ArrayList<Video> videosResponse =
@@ -129,10 +130,10 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                     if (videosResponse != null && !videosResponse.isEmpty()) {
                         videoAdapter.setItems(videosResponse);
                     } else {
-                        requestVideos(movie.getMovieId());
+                        requestVideos();
                     }
                 } else {
-                    requestVideos(movie.getMovieId());
+                    requestVideos();
                 }
 
                 if (savedInstanceState.containsKey(STATE_REVIEWS)) {
@@ -141,10 +142,10 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                     if (reviewsState != null && !reviewsState.isEmpty()) {
                         reviewAdapter.setItems(reviewsState);
                     } else {
-                        requestReviews(movie.getMovieId());
+                        requestReviews();
                     }
                 } else {
-                    requestReviews(movie.getMovieId());
+                    requestReviews();
                 }
             }
         }
@@ -191,12 +192,6 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                     R.string.error_open_movie,
                     Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    @OnClick(R.id.error_connection_action)
-    public void requestVideosAndReviews() {
-        requestVideos(movie.getMovieId());
-        requestReviews(movie.getMovieId());
     }
 
     private void setupLoaders() {
@@ -301,9 +296,10 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void requestVideos(Integer movieId) {
+    @OnClick(R.id.details_video_error_layout)
+    void requestVideos() {
         Bundle queryBundle = new Bundle();
-        queryBundle.putInt(VideoLoader.BUNDLE_ID, movieId);
+        queryBundle.putInt(VideoLoader.BUNDLE_ID, movie.getMovieId());
         LoaderManager loaderManager = getSupportLoaderManager();
         if (loaderManager.getLoader(VideoLoader.LOADER_ID) == null) {
             loaderManager.initLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
@@ -313,9 +309,10 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void requestReviews(Integer movieId) {
+    @OnClick(R.id.details_review_error_layout)
+    void requestReviews() {
         Bundle queryBundle = new Bundle();
-        queryBundle.putInt(ReviewLoader.BUNDLE_ID, movieId);
+        queryBundle.putInt(ReviewLoader.BUNDLE_ID, movie.getMovieId());
         LoaderManager loaderManager = getSupportLoaderManager();
         if (loaderManager.getLoader(ReviewLoader.LOADER_ID) == null) {
             loaderManager.initLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
