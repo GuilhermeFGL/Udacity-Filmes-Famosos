@@ -2,14 +2,14 @@ package com.guilhermefgl.peliculas.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @SuppressWarnings("ALL")
 public class ReviewResponse {
 
     @SerializedName("id")
     private Integer movieId;
-    private List<Review> results;
+    private ArrayList<Review> results;
 
     public Integer getMovieId() {
         return movieId;
@@ -19,11 +19,11 @@ public class ReviewResponse {
         this.movieId = movieId;
     }
 
-    public List<Review> getResults() {
+    public ArrayList<Review> getResults() {
         return results;
     }
 
-    public void setResults(List<Review> results) {
+    public void setResults(ArrayList<Review> results) {
         this.results = results;
     }
 }

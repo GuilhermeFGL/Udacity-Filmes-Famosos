@@ -13,17 +13,18 @@ import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
 
-    private List<Video> videos;
+    private ArrayList<Video> videos;
     private OnVideoItemClick onVideoItemClick;
 
-    VideoAdapter (List<Video> videos, OnVideoItemClick onVideoItemClick) {
+    VideoAdapter (ArrayList<Video> videos, OnVideoItemClick onVideoItemClick) {
         this.videos = videos;
         this.onVideoItemClick = onVideoItemClick;
     }
@@ -50,9 +51,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         return getItemCount() == 0;
     }
 
-    void setItems(List<Video> videos) {
+    void setItems(ArrayList<Video> videos) {
         this.videos = videos;
         notifyDataSetChanged();
+    }
+
+    ArrayList<Video> getItens() {
+        if (videos != null) {
+            return new ArrayList<>(videos);
+        }
+        return new ArrayList<>();
     }
 
     class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

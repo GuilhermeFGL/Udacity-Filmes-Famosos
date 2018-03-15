@@ -14,7 +14,7 @@ import java.util.Date;
 import static com.guilhermefgl.peliculas.models.provider.MovieContract.MovieEntry;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class Movie implements Parcelable{
+public class Movie implements Parcelable {
 
     @SerializedName("id")
     private Integer movieId;

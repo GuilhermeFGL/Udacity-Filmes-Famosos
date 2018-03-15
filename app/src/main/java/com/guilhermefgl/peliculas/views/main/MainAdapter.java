@@ -121,7 +121,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
             ArrayList<Movie> movies = new ArrayList<>(movieList);
             movies.remove(movieList.size() - 1);
-            return movies;
+            return new ArrayList<>(movies);
         }
         return new ArrayList<>(movieList);
     }

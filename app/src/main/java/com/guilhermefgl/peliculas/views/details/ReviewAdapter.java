@@ -10,14 +10,14 @@ import android.widget.TextView;
 import com.guilhermefgl.peliculas.R;
 import com.guilhermefgl.peliculas.models.Review;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
-    private List<Review> reviews;
+    private ArrayList<Review> reviews;
 
     @NonNull
     @Override
@@ -41,9 +41,16 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         return getItemCount() == 0;
     }
 
-    void setItems(List<Review> reviews) {
+    void setItems(ArrayList<Review> reviews) {
         this.reviews = reviews;
         notifyDataSetChanged();
+    }
+
+    ArrayList<Review> getItens() {
+        if (reviews != null) {
+            return new ArrayList<>(reviews);
+        }
+        return new ArrayList<>();
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {

@@ -26,6 +26,7 @@ import com.guilhermefgl.peliculas.helpers.Constants;
 import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.helpers.SnackBarHelper;
 import com.guilhermefgl.peliculas.models.Movie;
+import com.guilhermefgl.peliculas.models.Review;
 import com.guilhermefgl.peliculas.models.ReviewResponse;
 import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.models.VideoResponse;
@@ -35,6 +36,7 @@ import com.guilhermefgl.peliculas.services.loaders.VideoLoader;
 import com.guilhermefgl.peliculas.views.BaseActivity;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -69,6 +71,9 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     ProgressBar videosLoadingPB;
     @BindView(R.id.details_reviews_loading)
     ProgressBar reviewsLoadingPB;
+
+    private final String STATE_VIDEOS = VideoResponse.class.getName();
+    private final String STATE_REVIEWS = ReviewResponse.class.getName();
 
     private VideoAdapter videoAdapter;
     private ReviewAdapter reviewAdapter;
@@ -109,7 +114,47 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
         }
 
         setupLoaders();
-        setupView();
+        if (movie == null || movie.getMovieId() == null) {
+            finish();
+        } else {
+            setupView();
+
+            if (savedInstanceState == null || !savedInstanceState.containsKey(STATE_VIDEOS)
+                    || !savedInstanceState.containsKey(STATE_REVIEWS)) {
+                requestVideosAndReviews();
+            } else {
+                if (savedInstanceState.containsKey(STATE_VIDEOS)) {
+                    ArrayList<Video> videosResponse =
+                            savedInstanceState.getParcelableArrayList(STATE_VIDEOS);
+                    if (videosResponse != null && !videosResponse.isEmpty()) {
+                        videoAdapter.setItems(videosResponse);
+                    } else {
+                        requestVideos(movie.getMovieId());
+                    }
+                } else {
+                    requestVideos(movie.getMovieId());
+                }
+
+                if (savedInstanceState.containsKey(STATE_REVIEWS)) {
+                    ArrayList<Review> reviewsState =
+                            savedInstanceState.getParcelableArrayList(STATE_REVIEWS);
+                    if (reviewsState != null && !reviewsState.isEmpty()) {
+                        reviewAdapter.setItems(reviewsState);
+                    } else {
+                        requestReviews(movie.getMovieId());
+                    }
+                } else {
+                    requestReviews(movie.getMovieId());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putParcelableArrayList(STATE_VIDEOS, videoAdapter.getItens());
+        bundle.putParcelableArrayList(STATE_REVIEWS, reviewAdapter.getItens());
+        super.onSaveInstanceState(bundle);
     }
 
     @Override
@@ -202,38 +247,32 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     }
 
     private void setupView() {
-        if (movie == null || movie.getMovieId() == null) {
-            finish();
-        } else {
-            titleTV.setText(movie.getTitle());
-            voteRB.setRating((float) (movie.getVoteAverage() / 2));
-            viewsTV.setText(String.valueOf(movie.getPopularity()));
-            languageTV.setText(movie.getLanguage());
-            adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-            overviewTV.setText(movie.getOverview());
-            if (movie.getReleaseDate() != null) {
-                dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
-            }
-            PicassoHelper.loadImage(this,
-                    TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                    posterIV, R.mipmap.movie_background, R.mipmap.error_background);
-
-            videoAdapter = new VideoAdapter(null, this);
-            videosRV.setLayoutManager(new LinearLayoutManager(
-                    this, LinearLayoutManager.HORIZONTAL, false));
-            videosRV.setAdapter(videoAdapter);
-
-            reviewAdapter = new ReviewAdapter();
-            reviewsRV.setLayoutManager(new LinearLayoutManager(
-                    this, LinearLayoutManager.VERTICAL, false));
-            reviewsRV.setAdapter(reviewAdapter);
-            reviewsRV.setNestedScrollingEnabled(false);
-            reviewsRV.setHasFixedSize(false);
-            reviewsRV.addItemDecoration(
-                    new DividerItemDecoration(reviewsRV.getContext(), LinearLayoutManager.VERTICAL));
-
-            requestVideosAndReviews();
+        titleTV.setText(movie.getTitle());
+        voteRB.setRating((float) (movie.getVoteAverage() / 2));
+        viewsTV.setText(String.valueOf(movie.getPopularity()));
+        languageTV.setText(movie.getLanguage());
+        adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
+        overviewTV.setText(movie.getOverview());
+        if (movie.getReleaseDate() != null) {
+            dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
         }
+        PicassoHelper.loadImage(this,
+                TheMovieDBService.buildImageURL(movie.getPosterPath()),
+                posterIV, R.mipmap.movie_background, R.mipmap.error_background);
+
+        videoAdapter = new VideoAdapter(null, this);
+        videosRV.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false));
+        videosRV.setAdapter(videoAdapter);
+
+        reviewAdapter = new ReviewAdapter();
+        reviewsRV.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.VERTICAL, false));
+        reviewsRV.setAdapter(reviewAdapter);
+        reviewsRV.setNestedScrollingEnabled(false);
+        reviewsRV.setHasFixedSize(false);
+        reviewsRV.addItemDecoration(
+                new DividerItemDecoration(reviewsRV.getContext(), LinearLayoutManager.VERTICAL));
     }
 
     private void shareMovie() {

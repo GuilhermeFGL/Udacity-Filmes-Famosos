@@ -73,7 +73,6 @@ public class MovieContentProvider extends ContentProvider {
                         insertCount++;
                     }
                     db.setTransactionSuccessful();
-                } catch (Exception ignored) {
                 } finally {
                     db.endTransaction();
                 }
