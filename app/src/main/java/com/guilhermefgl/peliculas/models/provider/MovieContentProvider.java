@@ -18,7 +18,7 @@ public class MovieContentProvider extends ContentProvider {
     public static final int TAG_MOVIES = 100;
     public static final int TAG_MOVIE_WITH_ID = 101;
 
-    private static final UriMatcher URI_MATCHER;
+    public static final UriMatcher URI_MATCHER;
     static {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(Constants.AUTHORITY_PROVIDER, MovieContract.PATH, TAG_MOVIES);

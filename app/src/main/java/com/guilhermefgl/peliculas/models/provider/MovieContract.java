@@ -20,7 +20,10 @@ public final class MovieContract {
         public static final Uri CONTENT_URI;
         static {
             CONTENT_URI = Constants.URI_PROVIDER.buildUpon().appendPath(PATH).build();
-
+        }
+        public static final Uri CONTENT_URI_WITH_ID;
+        static {
+            CONTENT_URI_WITH_ID = Constants.URI_PROVIDER.buildUpon().appendEncodedPath(PATH_WITH_ID).build();
         }
 
         public static final String TABLE_NAME = "movies";
