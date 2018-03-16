@@ -67,6 +67,10 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     RecyclerView videosRV;
     @BindView(R.id.details_reviews)
     RecyclerView reviewsRV;
+    @BindView(R.id.details_videos_layout)
+    View videosLayout;
+    @BindView(R.id.details_reviews_layout)
+    View reviewsLayout;
     @BindView(R.id.details_videos_loading)
     ProgressBar videosLoadingPB;
     @BindView(R.id.details_reviews_loading)
@@ -151,6 +155,90 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
         }
     }
 
+    private void setupLoaders() {
+        videoLoaderCallback = new LoaderManager.LoaderCallbacks<VideoResponse>() {
+            @NonNull
+            @Override
+            public Loader<VideoResponse> onCreateLoader(int id, @Nullable Bundle args) {
+                videosLoadingPB.setVisibility(View.VISIBLE);
+                Integer movieId = args != null ? args.getInt(VideoLoader.BUNDLE_ID) : null;
+                return new VideoLoader(DetailsActivity.this, movieId);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<VideoResponse> loader, VideoResponse data) {
+                videosLoadingPB.setVisibility(View.GONE);
+                if(data != null) {
+                    if (data.getResults() != null && !data.getResults().isEmpty()){
+                        videoAdapter.setItems(data.getResults());
+                    } else if (videoAdapter.isEmpty()) {
+                        videosLayout.setVisibility(View.GONE);
+                    }
+                }
+                setErrorLayout(R.id.details_video_error_layout, videoAdapter.isEmpty());
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<VideoResponse> loader) { }
+        };
+        reviewLoaderCallback = new LoaderManager.LoaderCallbacks<ReviewResponse>() {
+            @NonNull
+            @Override
+            public Loader<ReviewResponse> onCreateLoader(int id, @Nullable Bundle args) {
+                reviewsLoadingPB.setVisibility(View.VISIBLE);
+                Integer movieId = args != null ? args.getInt(ReviewLoader.BUNDLE_ID) : null;
+                return new ReviewLoader(DetailsActivity.this, movieId);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<ReviewResponse> loader, ReviewResponse data) {
+                reviewsLoadingPB.setVisibility(View.GONE);
+                if(data != null) {
+                    if (data.getResults() != null && !data.getResults().isEmpty()) {
+                        reviewAdapter.setItems(data.getResults());
+                    } else if (reviewAdapter.isEmpty()) {
+                        reviewsLayout.setVisibility(View.GONE);
+                    }
+                }
+                setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<ReviewResponse> loader) { }
+        };
+        getSupportLoaderManager().initLoader(VideoLoader.LOADER_ID, null, videoLoaderCallback);
+        getSupportLoaderManager().initLoader(ReviewLoader.LOADER_ID, null, reviewLoaderCallback);
+    }
+
+    private void setupView() {
+        titleTV.setText(movie.getTitle());
+        voteRB.setRating((float) (movie.getVoteAverage() / 2));
+        viewsTV.setText(String.valueOf(movie.getPopularity()));
+        languageTV.setText(movie.getLanguage());
+        adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
+        overviewTV.setText(movie.getOverview());
+        if (movie.getReleaseDate() != null) {
+            dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
+        }
+        PicassoHelper.loadImage(this,
+                TheMovieDBService.buildImageURL(movie.getPosterPath()),
+                posterIV, R.mipmap.movie_background, R.mipmap.error_background);
+
+        videoAdapter = new VideoAdapter(null, this);
+        videosRV.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.HORIZONTAL, false));
+        videosRV.setAdapter(videoAdapter);
+
+        reviewAdapter = new ReviewAdapter();
+        reviewsRV.setLayoutManager(new LinearLayoutManager(
+                this, LinearLayoutManager.VERTICAL, false));
+        reviewsRV.setAdapter(reviewAdapter);
+        reviewsRV.setNestedScrollingEnabled(false);
+        reviewsRV.setHasFixedSize(false);
+        reviewsRV.addItemDecoration(
+                new DividerItemDecoration(reviewsRV.getContext(), LinearLayoutManager.VERTICAL));
+    }
+
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelableArrayList(STATE_VIDEOS, videoAdapter.getItens());
@@ -192,82 +280,6 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                     R.string.error_open_movie,
                     Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    private void setupLoaders() {
-        videoLoaderCallback = new LoaderManager.LoaderCallbacks<VideoResponse>() {
-            @NonNull
-            @Override
-            public Loader<VideoResponse> onCreateLoader(int id, @Nullable Bundle args) {
-                videosLoadingPB.setVisibility(View.VISIBLE);
-                Integer movieId = args != null ? args.getInt(VideoLoader.BUNDLE_ID) : null;
-                return new VideoLoader(DetailsActivity.this, movieId);
-            }
-
-            @Override
-            public void onLoadFinished(@NonNull Loader<VideoResponse> loader, VideoResponse data) {
-                videosLoadingPB.setVisibility(View.GONE);
-                if(data != null && data.getResults() != null && !data.getResults().isEmpty()) {
-                    videoAdapter.setItems(data.getResults());
-                }
-                setErrorLayout(R.id.details_video_error_layout, videoAdapter.isEmpty());
-            }
-
-            @Override
-            public void onLoaderReset(@NonNull Loader<VideoResponse> loader) { }
-        };
-        reviewLoaderCallback = new LoaderManager.LoaderCallbacks<ReviewResponse>() {
-            @NonNull
-            @Override
-            public Loader<ReviewResponse> onCreateLoader(int id, @Nullable Bundle args) {
-                reviewsLoadingPB.setVisibility(View.VISIBLE);
-                Integer movieId = args != null ? args.getInt(ReviewLoader.BUNDLE_ID) : null;
-                return new ReviewLoader(DetailsActivity.this, movieId);
-            }
-
-            @Override
-            public void onLoadFinished(@NonNull Loader<ReviewResponse> loader, ReviewResponse data) {
-                reviewsLoadingPB.setVisibility(View.GONE);
-                if(data != null && data.getResults() != null && !data.getResults().isEmpty()) {
-                    reviewAdapter.setItems(data.getResults());
-                }
-                setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
-            }
-
-            @Override
-            public void onLoaderReset(@NonNull Loader<ReviewResponse> loader) { }
-        };
-        getSupportLoaderManager().initLoader(VideoLoader.LOADER_ID, null, videoLoaderCallback);
-        getSupportLoaderManager().initLoader(ReviewLoader.LOADER_ID, null, reviewLoaderCallback);
-    }
-
-    private void setupView() {
-        titleTV.setText(movie.getTitle());
-        voteRB.setRating((float) (movie.getVoteAverage() / 2));
-        viewsTV.setText(String.valueOf(movie.getPopularity()));
-        languageTV.setText(movie.getLanguage());
-        adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-        overviewTV.setText(movie.getOverview());
-        if (movie.getReleaseDate() != null) {
-            dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
-        }
-        PicassoHelper.loadImage(this,
-                TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                posterIV, R.mipmap.movie_background, R.mipmap.error_background);
-
-        videoAdapter = new VideoAdapter(null, this);
-        videosRV.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.HORIZONTAL, false));
-        videosRV.setAdapter(videoAdapter);
-
-        reviewAdapter = new ReviewAdapter();
-        reviewsRV.setLayoutManager(new LinearLayoutManager(
-                this, LinearLayoutManager.VERTICAL, false));
-        reviewsRV.setAdapter(reviewAdapter);
-        reviewsRV.setNestedScrollingEnabled(false);
-        reviewsRV.setHasFixedSize(false);
-        reviewsRV.addItemDecoration(
-                new DividerItemDecoration(reviewsRV.getContext(), LinearLayoutManager.VERTICAL));
     }
 
     private void shareMovie() {
