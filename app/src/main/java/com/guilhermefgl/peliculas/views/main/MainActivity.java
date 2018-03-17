@@ -1,5 +1,6 @@
 package com.guilhermefgl.peliculas.views.main;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -120,6 +121,18 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && currentOrder == R.id.menu_main_favorite) {
+            boolean isFavorite = data.getBooleanExtra(Constants.Bundles.DETAILS_FAVOTITE, false);
+            Movie movie = data.getParcelableExtra(Constants.Bundles.DETAILS_MOVIE);
+            if (!isFavorite) {
+                mainAdapter.removeItem(movie);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onLoadMore() {
         mainAdapter.insertLoading();
         requestMovies(mainAdapter.getNextPage());
@@ -203,8 +216,7 @@ public class MainActivity extends BaseActivity
         }
 
         if (currentOrder == R.id.menu_main_favorite) {
-            mainSR.setRefreshing(false);
-            connectingPB.setVisibility(View.GONE);
+            endRequest();
         }
     }
 
@@ -215,6 +227,7 @@ public class MainActivity extends BaseActivity
     private void endRequest() {
         mainSR.setRefreshing(false);
         connectingPB.setVisibility(View.GONE);
+        errorSB.dismiss();
         mainAdapter.setFinishLoading();
     }
 

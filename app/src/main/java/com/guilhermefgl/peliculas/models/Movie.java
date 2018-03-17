@@ -201,4 +201,12 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    @Override
+    public boolean equals(Object object) {
+        return object != null &&
+                (object == this ||
+                        object instanceof Movie &&
+                                ((Movie) object).getMovieId().equals(this.getMovieId()));
+    }
 }

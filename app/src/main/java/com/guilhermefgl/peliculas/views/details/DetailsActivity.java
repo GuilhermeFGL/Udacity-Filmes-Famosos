@@ -1,5 +1,7 @@
 package com.guilhermefgl.peliculas.views.details;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -77,6 +79,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     @BindView(R.id.details_reviews_loading)
     ProgressBar reviewsLoadingPB;
 
+    private static final Integer RESULT_DETAILS = 1001;
     private final String STATE_VIDEOS = VideoResponse.class.getName();
     private final String STATE_REVIEWS = ReviewResponse.class.getName();
 
@@ -89,14 +92,17 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     private final SimpleDateFormat DATE_FORMATTER
             = new SimpleDateFormat(Constants.DATE_FORMATTER, Locale.getDefault());
 
+    @SuppressLint("RestrictedApi")
     public static void startActivity(BaseActivity activity, Bundle bundle, Bundle transition) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && transition != null) {
-            activity.startActivity(
+            activity.startActivityForResult(
                     new Intent(activity, DetailsActivity.class).putExtras(bundle),
+                    RESULT_DETAILS,
                     transition);
         } else {
-            activity.startActivity(
-                    new Intent(activity, DetailsActivity.class).putExtras(bundle));
+            activity.startActivityForResult(
+                    new Intent(activity, DetailsActivity.class).putExtras(bundle),
+                    RESULT_DETAILS);
         }
     }
 
@@ -124,6 +130,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
 
         setupLoaders();
         if (movie == null || movie.getMovieId() == null) {
+            setResult(Activity.RESULT_CANCELED, new Intent());
             finish();
         } else {
             setupView();
@@ -319,6 +326,10 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                         this,
                         movie,
                         isFavorite));
+        setResult(Activity.RESULT_OK,
+                new Intent()
+                        .putExtra(Constants.Bundles.DETAILS_FAVOTITE, isFavorite)
+                        .putExtra(Constants.Bundles.DETAILS_MOVIE, movie));
     }
 
     @SuppressWarnings("ConstantConditions")

@@ -146,8 +146,12 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @SuppressWarnings("SuspiciousMethodCalls")
     void removeLoading() {
-        if (movieList.removeAll(Collections.singleton(null)) ) {
-            notifyItemRemoved(movieList.size());
+        removeItem(null);
+    }
+
+    void removeItem(Movie movie) {
+        if (movieList.removeAll(Collections.singleton(movie)) ) {
+            notifyDataSetChanged();
         }
     }
 
