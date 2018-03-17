@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.guilhermefgl.peliculas.BuildConfig;
 import com.guilhermefgl.peliculas.models.Movie;
+import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
 public final class Constants {
 
@@ -19,6 +20,7 @@ public final class Constants {
         private Bundles() { }
 
         public static final String DETAILS_MOVIE = Movie.class.getName();
+        public static final String DETAILS_FAVOTITE = TheMovieDBService.ORDER_FAVORITE;
 
     }
 }

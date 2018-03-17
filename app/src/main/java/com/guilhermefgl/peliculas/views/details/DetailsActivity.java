@@ -30,6 +30,7 @@ import com.guilhermefgl.peliculas.models.Review;
 import com.guilhermefgl.peliculas.models.ReviewResponse;
 import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.models.VideoResponse;
+import com.guilhermefgl.peliculas.services.LocalStorageFavorite;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 import com.guilhermefgl.peliculas.services.loaders.ReviewLoader;
 import com.guilhermefgl.peliculas.services.loaders.VideoLoader;
@@ -82,6 +83,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     private VideoAdapter videoAdapter;
     private ReviewAdapter reviewAdapter;
     private Movie movie;
+    private boolean isFavorite;
     private LoaderManager.LoaderCallbacks<VideoResponse> videoLoaderCallback;
     private LoaderManager.LoaderCallbacks<ReviewResponse> reviewLoaderCallback;
     private final SimpleDateFormat DATE_FORMATTER
@@ -110,10 +112,13 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        if (getIntent().getExtras() != null && getIntent().hasExtra(Constants.Bundles.DETAILS_MOVIE)) {
-            Object extra = getIntent().getExtras().get(Constants.Bundles.DETAILS_MOVIE);
-            if (extra != null && extra instanceof Movie) {
-                movie = (Movie) extra;
+        if (getIntent().getExtras() != null) {
+            isFavorite = getIntent().getBooleanExtra(Constants.Bundles.DETAILS_FAVOTITE, false);
+            if (getIntent().hasExtra(Constants.Bundles.DETAILS_MOVIE)) {
+                Object extra = getIntent().getExtras().get(Constants.Bundles.DETAILS_MOVIE);
+                if (extra != null && extra instanceof Movie) {
+                    movie = (Movie) extra;
+                }
             }
         }
 
@@ -249,6 +254,9 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
+        if (isFavorite) {
+            menu.getItem(R.id.menu_details_favorite).setIcon(R.drawable.ic_favorite_full);
+        }
         return true;
     }
 
@@ -304,7 +312,13 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     }
 
     private void toggleFavoriteMovie(MenuItem item) {
-        // TODO
+        isFavorite = !isFavorite;
+        item.setIcon(isFavorite ? R.drawable.ic_favorite_empty : R.drawable.ic_favorite_full);
+        new LocalStorageFavorite().execute(
+                new LocalStorageFavorite.MovieParams(
+                        this,
+                        movie,
+                        isFavorite));
     }
 
     @SuppressWarnings("ConstantConditions")

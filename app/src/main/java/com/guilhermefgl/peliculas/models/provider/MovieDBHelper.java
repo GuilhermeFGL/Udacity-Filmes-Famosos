@@ -49,8 +49,16 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public static String buildSelection(String column) {
-        return column.concat("=?");
+    public static String buildSelection(String... column) {
+        final String columnSyntax = "=?";
+        final String columnConcat = " AND ";
+
+        StringBuilder selection = new StringBuilder();
+        selection.append(column[0].concat(columnSyntax));
+        for(int i = 1; i < column.length; i++) {
+            selection.append(columnConcat).append(column[i].concat(columnSyntax));
+        }
+        return selection.toString();
     }
 
     public static ContentValues[] buildContentValues(List<Movie> movies, String order) {
@@ -63,7 +71,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         return contentValues;
     }
 
-    private static ContentValues buildContentValue(Movie movie, String order) {
+    public static ContentValues buildContentValue(Movie movie, String order) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieEntry.COLUMN_API_ID, movie.getMovieId());
         contentValues.put(MovieEntry.COLUMN_TITLE, movie.getTitle());

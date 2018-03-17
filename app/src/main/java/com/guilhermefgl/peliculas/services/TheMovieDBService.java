@@ -34,6 +34,7 @@ public final class TheMovieDBService {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
     public static final String ORDER_TOP_RATED = "top_rated";
+    public static final String ORDER_FAVORITE = "favorite";
     public static final int LISTING_FIRST_PAGE = 1;
 
     private static final OkHttpClient httpClient;
