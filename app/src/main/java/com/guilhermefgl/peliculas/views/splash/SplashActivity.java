@@ -1,7 +1,10 @@
-package com.guilhermefgl.peliculas.activities;
+package com.guilhermefgl.peliculas.views.splash;
 
 
 import android.os.Bundle;
+
+import com.guilhermefgl.peliculas.views.main.MainActivity;
+import com.guilhermefgl.peliculas.views.BaseActivity;
 
 public class SplashActivity extends BaseActivity {
 

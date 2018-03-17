@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.guilhermefgl.peliculas.R;
 
-public class SnackBarHelper {
+public final class SnackBarHelper {
 
     private SnackBarHelper() {}
 

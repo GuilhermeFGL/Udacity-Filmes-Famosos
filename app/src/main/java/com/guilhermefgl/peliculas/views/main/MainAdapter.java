@@ -1,4 +1,4 @@
-package com.guilhermefgl.peliculas.adapters;
+package com.guilhermefgl.peliculas.views.main;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,11 +17,12 @@ import com.guilhermefgl.peliculas.models.MovieResponse;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Movie> movieList;
     private Integer currentPage, maxPages;
@@ -31,11 +32,13 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final int VISIBLE_THRESHOLD = 4;
     private int lastVisibleItem, totalItemCount;
 
+    static final int GRID_PORTRAIT = 2;
+    static final int GRID_LANDSCAPE = 4;
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_LOADING = 1;
 
-    public MovieAdapter(RecyclerView recyclerView, final int spanCount,
-                        final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
+    MainAdapter(RecyclerView recyclerView, final int spanCount,
+                final OnLoadMoreListener listener, OnMovieItemClick onMovieItemClick) {
         this.movieList = new ArrayList<>();
         this.onMovieItemClick = onMovieItemClick;
 
@@ -44,15 +47,16 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             @Override
             public int getSpanSize(int position) {
                 switch(getItemViewType(position)){
-                    case MovieAdapter.VIEW_TYPE_ITEM:
+                    case MainAdapter.VIEW_TYPE_ITEM:
                         return 1;
-                    case MovieAdapter.VIEW_TYPE_LOADING:
+                    case MainAdapter.VIEW_TYPE_LOADING:
                         return spanCount;
                     default:
                         return -1;
                 }
             }
         });
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -101,27 +105,31 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return movieList != null ? movieList.size() : 0;
     }
 
-    public int getCurrentPage() {
+    boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    int getCurrentPage() {
         return currentPage != null ? currentPage : 0;
     }
 
-    public int getNextPage() {
+    int getNextPage() {
         return getCurrentPage() + 1;
     }
 
-    public ArrayList<Movie> getItems() {
+    ArrayList<Movie> getItems() {
         if (!movieList.isEmpty() && movieList.get(movieList.size() - 1) == null) {
             ArrayList<Movie> movies = new ArrayList<>(movieList);
             movies.remove(movieList.size() - 1);
-            return movies;
+            return new ArrayList<>(movies);
         }
         return new ArrayList<>(movieList);
     }
 
-    public void insertItems(MovieResponse movieResponse) {
+    void insertItems(MovieResponse movieResponse) {
         currentPage = movieResponse.getPage();
         maxPages = movieResponse.getTotalPages();
-        if (movieResponse.getPage() == 1) {
+        if (currentPage == TheMovieDBService.LISTING_FIRST_PAGE) {
             movieList = movieResponse.getResults();
         } else {
             movieList.addAll(movieResponse.getResults());
@@ -129,21 +137,25 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void insertLoading() {
+    void insertLoading() {
         if (movieList.get(movieList.size() - 1) != null) {
             movieList.add(null);
             notifyItemInserted(movieList.size() - 1);
         }
     }
 
-    public void removeLoading() {
-        if (!movieList.isEmpty()) {
-            movieList.remove(movieList.size() - 1);
-            notifyItemRemoved(movieList.size());
+    @SuppressWarnings("SuspiciousMethodCalls")
+    void removeLoading() {
+        removeItem(null);
+    }
+
+    void removeItem(Movie movie) {
+        if (movieList.removeAll(Collections.singleton(movie)) ) {
+            notifyDataSetChanged();
         }
     }
 
-    public void setFinishLoading() {
+    void setFinishLoading() {
         isLoading = false;
     }
 
@@ -177,7 +189,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemAverageRB.setRating((float) (movie.getVoteAverage() / 10));
             PicassoHelper.loadImage(view.getContext(),
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                    itemThumbnailIV);
+                    itemThumbnailIV, R.mipmap.movie_background, R.mipmap.error_background);
             view.setOnClickListener(this);
         }
 

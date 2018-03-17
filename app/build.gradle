@@ -7,8 +7,8 @@ android {
         applicationId "com.guilhermefgl.peliculas"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -26,17 +26,25 @@ android {
             dimension 'peliculas'
             buildConfigField 'Boolean', 'LOGGER_ENABLED', 'true'
             buildConfigField 'String', 'API_KEY', project.api_key
+            buildConfigField 'String', 'DB_NAME', "\"debug.db\""
         }
         production {
             dimension 'peliculas'
             buildConfigField 'Boolean', 'LOGGER_ENABLED', 'false'
             buildConfigField 'String', 'API_KEY', project.api_key
+            buildConfigField 'String', 'DB_NAME', "\"movies.db\""
         }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('lib/SQLiteStudioRemote.jar')
+
     implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support:design:27.1.0'
     implementation 'com.android.support:recyclerview-v7:27.1.0'
@@ -50,6 +58,7 @@ dependencies {
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.roughike:bottom-bar:2.3.1'
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 

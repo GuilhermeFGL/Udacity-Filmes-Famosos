@@ -5,11 +5,18 @@ import android.app.Application;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
+import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
+
 public class PeliculasApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (BuildConfig.LOGGER_ENABLED) {
+            SQLiteStudioService.instance().start(this);
+        }
+
         setPicasso();
     }
 

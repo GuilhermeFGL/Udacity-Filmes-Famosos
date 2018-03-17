@@ -1,7 +1,13 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.guilhermefgl.peliculas.activities.DetailsActivity">
+    tools:context="com.guilhermefgl.peliculas.views.details.DetailsActivity">
+
+    <item
+        android:id="@+id/menu_details_favorite"
+        android:icon="@drawable/ic_favorite_empty"
+        android:title="@string/menu_details_favorite"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/menu_details_share"

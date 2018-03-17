@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.guilhermefgl.peliculas.BuildConfig;
 import com.guilhermefgl.peliculas.models.MovieResponse;
+import com.guilhermefgl.peliculas.models.ReviewResponse;
+import com.guilhermefgl.peliculas.models.VideoResponse;
 
 import java.io.IOException;
 
@@ -22,14 +24,17 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public class TheMovieDBService {
+public final class TheMovieDBService {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185/";
+    private static final String IMAGE_YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
+    private static final String IMAGE_YOUTUBE_THUMBNAIL_BASE_URL = "https://img.youtube.com/vi/%s/0.jpg";
     private static final String WEB_URL = "https://www.themoviedb.org/movie/";
-    private static final String DATE_FORMATTER = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
     public static final String ORDER_TOP_RATED = "top_rated";
+    public static final String ORDER_FAVORITE = "favorite";
     public static final int LISTING_FIRST_PAGE = 1;
 
     private static final OkHttpClient httpClient;
@@ -53,7 +58,7 @@ public class TheMovieDBService {
     }
     static {
          gson = new GsonBuilder()
-                .setDateFormat(DATE_FORMATTER)
+                .setDateFormat(DATE_FORMAT)
                 .create();
     }
 
@@ -74,6 +79,16 @@ public class TheMovieDBService {
     }
 
     @NonNull
+    public static String buildYoutubeUrl(String youtubeId) {
+        return IMAGE_YOUTUBE_BASE_URL.concat(youtubeId);
+    }
+
+    @NonNull
+    public static String buildYoutubeThumbnailUrl(String youtubeId) {
+        return String.format(IMAGE_YOUTUBE_THUMBNAIL_BASE_URL, youtubeId);
+    }
+
+    @NonNull
     public static String buildWebURL(int movieId) {
         return WEB_URL.concat(String.valueOf(movieId));
     }
@@ -81,6 +96,12 @@ public class TheMovieDBService {
     public interface TheMovieDBClient {
 
         @GET("{order}")
-        Call<MovieResponse> list(@Path("order") String order, @Query("page") int page);
+        Call<MovieResponse> listMovies(@Path("order") String order, @Query("page") Integer page);
+
+        @GET("{id}/videos")
+        Call<VideoResponse> listVideos(@Path("id") Integer movieId);
+
+        @GET("{id}/reviews")
+        Call<ReviewResponse> listReviews(@Path("id") Integer movieId);
     }
 }
