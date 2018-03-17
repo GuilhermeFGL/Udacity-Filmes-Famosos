@@ -112,6 +112,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        setResult(Activity.RESULT_CANCELED, new Intent());
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -130,7 +131,6 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
 
         setupLoaders();
         if (movie == null || movie.getMovieId() == null) {
-            setResult(Activity.RESULT_CANCELED, new Intent());
             finish();
         } else {
             setupView();
@@ -218,8 +218,6 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             @Override
             public void onLoaderReset(@NonNull Loader<ReviewResponse> loader) { }
         };
-        getSupportLoaderManager().initLoader(VideoLoader.LOADER_ID, null, videoLoaderCallback);
-        getSupportLoaderManager().initLoader(ReviewLoader.LOADER_ID, null, reviewLoaderCallback);
     }
 
     private void setupView() {
