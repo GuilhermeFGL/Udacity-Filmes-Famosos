@@ -14,6 +14,7 @@
     <string name="menu_main_order">order options</string>
     <string name="menu_main_popular">Order by Popular</string>
     <string name="menu_main_top_rated">Order by Top Rated</string>
+    <string name="menu_main_favorite">My Favorites</string>
 
     <!-- DETAILS ACTIVITY -->
     <string name="item_details_video_thumbnail">trailer thumbnail</string>

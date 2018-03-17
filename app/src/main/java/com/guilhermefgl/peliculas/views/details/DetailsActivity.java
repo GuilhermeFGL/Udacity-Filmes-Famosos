@@ -255,7 +255,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
         if (isFavorite) {
-            menu.getItem(R.id.menu_details_favorite).setIcon(R.drawable.ic_favorite_full);
+            menu.findItem(R.id.menu_details_favorite).setIcon(R.drawable.ic_favorite_full);
         }
         return true;
     }
@@ -313,7 +313,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
 
     private void toggleFavoriteMovie(MenuItem item) {
         isFavorite = !isFavorite;
-        item.setIcon(isFavorite ? R.drawable.ic_favorite_empty : R.drawable.ic_favorite_full);
+        item.setIcon(isFavorite ? R.drawable.ic_favorite_full : R.drawable.ic_favorite_empty);
         new LocalStorageFavorite().execute(
                 new LocalStorageFavorite.MovieParams(
                         this,

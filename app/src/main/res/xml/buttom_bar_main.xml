@@ -8,4 +8,8 @@
         id="@+id/menu_main_top_rated"
         icon="@drawable/ic_star"
         title="@string/menu_main_top_rated" />
+    <tab
+        id="@+id/menu_main_favorite"
+        icon="@drawable/ic_favorite_full"
+        title="@string/menu_main_favorite" />
 </tabs>

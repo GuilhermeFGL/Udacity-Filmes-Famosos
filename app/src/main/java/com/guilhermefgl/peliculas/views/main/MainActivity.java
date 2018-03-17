@@ -140,6 +140,9 @@ public class MainActivity extends BaseActivity
     public void onMovieItemClick(Movie movie, ImageView moviePoster) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.Bundles.DETAILS_MOVIE, movie);
+        if(currentOrder == R.id.menu_main_favorite) {
+            bundle.putBoolean(Constants.Bundles.DETAILS_FAVOTITE, true);
+        }
 
         Bundle transition = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -189,7 +192,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onReadMovies(final ArrayList<Movie> movies) {
-        if (movies != null && !movies.isEmpty()) {
+        if (movies != null) {
             mainAdapter.insertItems(new MovieResponse() {{
                 setPage(TheMovieDBService.LISTING_FIRST_PAGE);
                 setTotalPages(TheMovieDBService.LISTING_FIRST_PAGE);
@@ -197,6 +200,11 @@ public class MainActivity extends BaseActivity
             }});
             errorConnectionLL.setVisibility(View.GONE);
             mainRV.setVisibility(View.VISIBLE);
+        }
+
+        if (currentOrder == R.id.menu_main_favorite) {
+            mainSR.setRefreshing(false);
+            connectingPB.setVisibility(View.GONE);
         }
     }
 
@@ -235,14 +243,16 @@ public class MainActivity extends BaseActivity
                     new LocalStorageReader.MovieParams(this, order));
         }
 
-        Bundle queryBundle = new Bundle();
-        queryBundle.putInt(MovieLoader.BUNDLE_PAGE, page);
-        queryBundle.putString(MovieLoader.BUNDLE_ORDER, order);
-        LoaderManager loaderManager = getSupportLoaderManager();
-        if (loaderManager.getLoader(MovieLoader.LOADER_ID) == null) {
-            loaderManager.initLoader(MovieLoader.LOADER_ID, queryBundle, this);
-        } else {
-            loaderManager.restartLoader(MovieLoader.LOADER_ID, queryBundle, this);
+        if (!order.equals(TheMovieDBService.ORDER_FAVORITE)) {
+            Bundle queryBundle = new Bundle();
+            queryBundle.putInt(MovieLoader.BUNDLE_PAGE, page);
+            queryBundle.putString(MovieLoader.BUNDLE_ORDER, order);
+            LoaderManager loaderManager = getSupportLoaderManager();
+            if (loaderManager.getLoader(MovieLoader.LOADER_ID) == null) {
+                loaderManager.initLoader(MovieLoader.LOADER_ID, queryBundle, this);
+            } else {
+                loaderManager.restartLoader(MovieLoader.LOADER_ID, queryBundle, this);
+            }
         }
     }
 
@@ -252,6 +262,8 @@ public class MainActivity extends BaseActivity
                 return TheMovieDBService.ORDER_POPULAR;
             case R.id.menu_main_top_rated:
                 return TheMovieDBService.ORDER_TOP_RATED;
+            case R.id.menu_main_favorite:
+                return TheMovieDBService.ORDER_FAVORITE;
             default:
                 return TheMovieDBService.ORDER_POPULAR;
         }
