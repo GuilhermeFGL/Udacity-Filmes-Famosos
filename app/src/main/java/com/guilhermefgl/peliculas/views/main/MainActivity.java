@@ -227,8 +227,10 @@ public class MainActivity extends BaseActivity
     private void endRequest() {
         mainSR.setRefreshing(false);
         connectingPB.setVisibility(View.GONE);
-        errorSB.dismiss();
         mainAdapter.setFinishLoading();
+        if (errorSB.isShown()) {
+            errorSB.dismiss();
+        }
     }
 
     private void setErrorLayout(boolean hasError) {

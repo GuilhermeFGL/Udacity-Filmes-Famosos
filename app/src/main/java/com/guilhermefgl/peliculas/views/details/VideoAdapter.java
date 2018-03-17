@@ -13,7 +13,6 @@ import com.guilhermefgl.peliculas.helpers.PicassoHelper;
 import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import butterknife.BindView;

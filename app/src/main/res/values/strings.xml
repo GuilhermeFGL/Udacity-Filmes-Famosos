@@ -11,7 +11,6 @@
     <!-- MAIN ACTIVITY -->
     <string name="item_movie_thumbnail">movie thumbnail</string>
     <string name="item_movie_loading">Loading more movies…</string>
-    <string name="menu_main_order">order options</string>
     <string name="menu_main_popular">Order by Popular</string>
     <string name="menu_main_top_rated">Order by Top Rated</string>
     <string name="menu_main_favorite">My Favorites</string>
@@ -20,12 +19,10 @@
     <string name="item_details_video_thumbnail">trailer thumbnail</string>
     <string name="details_image_desc">movie poster</string>
     <string name="details_adult_label">adult</string>
-    <string name="details_views_desc">movie views</string>
     <string name="details_date_label">Release date:</string>
     <string name="details_overview_label">Overview:</string>
     <string name="details_videos_label">Trailers:</string>
     <string name="details_reviews_label">Reviews:</string>
-    <string name="details_intent_shre_title">Share a movie</string>
     <string name="details_transition_poster">transition_poster</string>
     <string name="menu_details_share">share</string>
     <string name="menu_details_favorite">favorite</string>
