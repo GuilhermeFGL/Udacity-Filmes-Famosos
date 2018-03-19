@@ -3,6 +3,7 @@ package com.guilhermefgl.peliculas.views.details;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.guilhermefgl.peliculas.models.Video;
 import com.guilhermefgl.peliculas.models.VideoResponse;
 import com.guilhermefgl.peliculas.services.LocalStorageFavorite;
 import com.guilhermefgl.peliculas.services.TheMovieDBService;
+import com.guilhermefgl.peliculas.services.loaders.FavoriteLoader;
 import com.guilhermefgl.peliculas.services.loaders.ReviewLoader;
 import com.guilhermefgl.peliculas.services.loaders.VideoLoader;
 import com.guilhermefgl.peliculas.views.BaseActivity;
@@ -259,9 +261,37 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
+
+        final MenuItem menuFavorite = menu.findItem(R.id.menu_details_favorite);
         if (isFavorite) {
-            menu.findItem(R.id.menu_details_favorite).setIcon(R.drawable.ic_favorite_full);
+            menuFavorite.setVisible(true);
+            menuFavorite.setIcon(R.drawable.ic_favorite_full);
+        } else {
+            Bundle queryBundle = new Bundle();
+            queryBundle.putInt(VideoLoader.BUNDLE_ID, movie.getMovieId());
+            getLoaderManager().initLoader(
+                    FavoriteLoader.LOADER_ID,
+                    queryBundle,
+                    new android.app.LoaderManager.LoaderCallbacks<Cursor>() {
+                        @Override
+                        public android.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                            Integer movieId = args != null ? args.getInt(FavoriteLoader.BUNDLE_ID) : null;
+                            return new FavoriteLoader(DetailsActivity.this, movieId);
+                        }
+
+                        @Override
+                        public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
+                            menuFavorite.setVisible(true);
+                            if (data != null && data.getCount() > 0) {
+                                menuFavorite.setIcon(R.drawable.ic_favorite_full);
+                            }
+                        }
+
+                        @Override
+                        public void onLoaderReset(android.content.Loader<Cursor> loader) { }
+                    });
         }
+
         return true;
     }
 
