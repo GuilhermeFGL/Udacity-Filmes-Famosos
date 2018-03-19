@@ -268,7 +268,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             menuFavorite.setIcon(R.drawable.ic_favorite_full);
         } else {
             Bundle queryBundle = new Bundle();
-            queryBundle.putInt(VideoLoader.BUNDLE_ID, movie.getMovieId());
+            queryBundle.putInt(FavoriteLoader.BUNDLE_ID, movie.getMovieId());
             getLoaderManager().initLoader(
                     FavoriteLoader.LOADER_ID,
                     queryBundle,
@@ -284,6 +284,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
                             menuFavorite.setVisible(true);
                             if (data != null && data.getCount() > 0) {
                                 menuFavorite.setIcon(R.drawable.ic_favorite_full);
+                                isFavorite = true;
                             }
                         }
 
