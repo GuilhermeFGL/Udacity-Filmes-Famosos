@@ -77,7 +77,6 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        getSupportLoaderManager().initLoader(MovieLoader.LOADER_ID, null, this);
 
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ?
@@ -190,14 +189,16 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onLoadFinished(@NonNull Loader<MovieResponse> loader, MovieResponse data) {
-        if(data != null) {
-            mainAdapter.removeLoading();
-            mainAdapter.insertItems(data);
-            setErrorLayout(false);
-        } else {
-            setErrorLayout(true);
+        if (isRequesting()) {
+            if (data != null) {
+                mainAdapter.removeLoading();
+                mainAdapter.insertItems(data);
+                setErrorLayout(false);
+            } else {
+                setErrorLayout(true);
+            }
+            endRequest();
         }
-        endRequest();
     }
 
     @Override
@@ -218,6 +219,10 @@ public class MainActivity extends BaseActivity
         if (currentOrder == R.id.menu_main_favorite) {
             endRequest();
         }
+    }
+
+    private boolean isRequesting() {
+        return connectingPB.getVisibility() == View.VISIBLE;
     }
 
     private void startRequest() {
