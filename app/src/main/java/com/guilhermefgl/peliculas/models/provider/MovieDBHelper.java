@@ -18,7 +18,7 @@ import static com.guilhermefgl.peliculas.models.provider.MovieContract.MovieEntr
 public class MovieDBHelper extends SQLiteOpenHelper {
 
     public static final SimpleDateFormat DATE_FORMATTER
-            = new SimpleDateFormat(TheMovieDBService.DATE_FORMAT, Locale.getDefault());
+            = new SimpleDateFormat(TheMovieDBService.RESPONSE_DATE_FORMAT, Locale.getDefault());
 
     MovieDBHelper(Context context) {
         super(context, BuildConfig.DB_NAME, null, BuildConfig.VERSION_CODE);

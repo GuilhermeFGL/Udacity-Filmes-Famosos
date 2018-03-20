@@ -186,7 +186,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void bind(Movie movie) {
             this.movie = movie;
             itemTitleTextView.setText(movie.getTitle());
-            itemAverageRatingBar.setRating((float) (movie.getVoteAverage() / 10));
+            itemAverageRatingBar.setRating((float) (movie.getVoteAverage() / TheMovieDBService.TOP_RATING_COUNT));
             PicassoHelper.loadImage(view.getContext(),
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
                     itemThumbnailImageView, R.mipmap.movie_background, R.mipmap.error_background);
