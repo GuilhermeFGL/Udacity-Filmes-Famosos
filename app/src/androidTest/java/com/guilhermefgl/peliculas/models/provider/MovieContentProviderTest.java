@@ -27,7 +27,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
-public class MovieContentProvider_Test {
+public class MovieContentProviderTest {
 
     private final Context context = InstrumentationRegistry.getTargetContext();
 

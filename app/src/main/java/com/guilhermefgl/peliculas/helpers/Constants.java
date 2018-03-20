@@ -13,7 +13,7 @@ public final class Constants {
     public static final String AUTHORITY_PROVIDER = BuildConfig.APPLICATION_ID;
     public static final Uri URI_PROVIDER = Uri.parse("content://".concat(AUTHORITY_PROVIDER));
 
-    public static final String DATE_FORMATTER = "dd MMMM yyyy";
+    public static final String VIEW_DATE_FORMATTER = "dd MMMM yyyy";
 
     public static class Bundles {
 

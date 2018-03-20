@@ -92,7 +92,7 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     private LoaderManager.LoaderCallbacks<VideoResponse> videoLoaderCallback;
     private LoaderManager.LoaderCallbacks<ReviewResponse> reviewLoaderCallback;
     private final SimpleDateFormat DATE_FORMATTER
-            = new SimpleDateFormat(Constants.DATE_FORMATTER, Locale.getDefault());
+            = new SimpleDateFormat(Constants.VIEW_DATE_FORMATTER, Locale.getDefault());
 
     @SuppressLint("RestrictedApi")
     public static void startActivity(BaseActivity activity, Bundle bundle, Bundle transition) {

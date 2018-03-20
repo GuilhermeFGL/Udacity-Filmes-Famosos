@@ -23,4 +23,11 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.guilhermefgl.peliculas", appContext.getPackageName());
     }
+
+    @Test
+    public void testBuildConstants() {
+        assertNotNull(BuildConfig.API_KEY);
+        assertNotNull(BuildConfig.LOGGER_ENABLED);
+        assertNotNull(BuildConfig.DB_NAME);
+    }
 }
