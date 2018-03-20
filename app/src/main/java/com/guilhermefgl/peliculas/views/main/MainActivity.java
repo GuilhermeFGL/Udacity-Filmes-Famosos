@@ -78,6 +78,12 @@ public class MainActivity extends BaseActivity
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
+        errorSnackbar = SnackBarHelper.make(this,
+                findViewById(R.id.main_navigation),
+                R.string.error_connection_label,
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.error_connection_action, this);
+
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ?
                 MainAdapter.GRID_PORTRAIT : MainAdapter.GRID_LANDSCAPE;
@@ -90,15 +96,8 @@ public class MainActivity extends BaseActivity
 
         navigationBottomBar.setOnTabSelectListener(this);
 
-        errorSnackbar = SnackBarHelper.make(this,
-                findViewById(R.id.main_navigation),
-                R.string.error_connection_label,
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.error_connection_action, this);
-
         if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_MOVIES)) {
             currentOrder = R.id.menu_main_popular;
-            requestMovies(TheMovieDBService.LISTING_FIRST_PAGE);
         } else {
             mainAdapter.insertItems((MovieResponse) savedInstanceState.getParcelable(STATE_MOVIES));
             if (savedInstanceState.containsKey(STATE_ORDER)) {
