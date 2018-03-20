@@ -15,11 +15,7 @@
     <TextView
         android:id="@+id/item_review_content"
         android:layout_below="@+id/item_review_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:textStyle="italic"
-        android:textColor="@color/secondary_text"
-        tool:text="@string/lore"/>
+        tool:text="@string/lore"
+        style="Style/TextSecondaryItalic" />
 
 </RelativeLayout>
