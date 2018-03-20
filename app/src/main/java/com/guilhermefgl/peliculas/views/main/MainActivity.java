@@ -218,9 +218,7 @@ public class MainActivity extends BaseActivity
 
         if (currentOrder == R.id.menu_main_favorite) {
             endRequest();
-            if (errorSnackbar.isShown()) {
-                errorSnackbar.dismiss();
-            }
+            setErrorLayout(false);
         }
     }
 
