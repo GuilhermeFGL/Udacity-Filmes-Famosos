@@ -53,33 +53,33 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     @BindView(R.id.details_toolbar)
     Toolbar toolbar;
     @BindView(R.id.details_image)
-    ImageView posterIV;
+    ImageView posterImageView;
     @BindView(R.id.details_title)
-    TextView titleTV;
+    TextView titleTextView;
     @BindView(R.id.details_rating)
-    RatingBar voteRB;
+    RatingBar voteRatingBar;
     @BindView(R.id.details_views_text)
-    TextView viewsTV;
+    TextView viewsTextView;
     @BindView(R.id.details_views_language)
-    TextView languageTV;
+    TextView languageTextView;
     @BindView(R.id.details_adult)
-    TextView adultTV;
+    TextView adultTextView;
     @BindView(R.id.details_date)
-    TextView dateTV;
+    TextView dateTextView;
     @BindView(R.id.details_overview)
-    TextView overviewTV;
+    TextView overviewTextView;
     @BindView(R.id.details_videos)
-    RecyclerView videosRV;
+    RecyclerView videosRecyclerView;
     @BindView(R.id.details_reviews)
-    RecyclerView reviewsRV;
+    RecyclerView reviewsRecyclerView;
     @BindView(R.id.details_videos_layout)
     View videosLayout;
     @BindView(R.id.details_reviews_layout)
     View reviewsLayout;
     @BindView(R.id.details_videos_loading)
-    ProgressBar videosLoadingPB;
+    ProgressBar videosLoadingProgressBar;
     @BindView(R.id.details_reviews_loading)
-    ProgressBar reviewsLoadingPB;
+    ProgressBar reviewsLoadingProgressBar;
 
     private static final Integer RESULT_DETAILS = 1001;
     private final String STATE_VIDEOS = VideoResponse.class.getName();
@@ -174,14 +174,14 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             @NonNull
             @Override
             public Loader<VideoResponse> onCreateLoader(int id, @Nullable Bundle args) {
-                videosLoadingPB.setVisibility(View.VISIBLE);
+                videosLoadingProgressBar.setVisibility(View.VISIBLE);
                 Integer movieId = args != null ? args.getInt(VideoLoader.BUNDLE_ID) : null;
                 return new VideoLoader(DetailsActivity.this, movieId);
             }
 
             @Override
             public void onLoadFinished(@NonNull Loader<VideoResponse> loader, VideoResponse data) {
-                videosLoadingPB.setVisibility(View.GONE);
+                videosLoadingProgressBar.setVisibility(View.GONE);
                 if(data != null) {
                     if (data.getResults() != null && !data.getResults().isEmpty()){
                         videoAdapter.setItems(data.getResults());
@@ -199,14 +199,14 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
             @NonNull
             @Override
             public Loader<ReviewResponse> onCreateLoader(int id, @Nullable Bundle args) {
-                reviewsLoadingPB.setVisibility(View.VISIBLE);
+                reviewsLoadingProgressBar.setVisibility(View.VISIBLE);
                 Integer movieId = args != null ? args.getInt(ReviewLoader.BUNDLE_ID) : null;
                 return new ReviewLoader(DetailsActivity.this, movieId);
             }
 
             @Override
             public void onLoadFinished(@NonNull Loader<ReviewResponse> loader, ReviewResponse data) {
-                reviewsLoadingPB.setVisibility(View.GONE);
+                reviewsLoadingProgressBar.setVisibility(View.GONE);
                 if(data != null) {
                     if (data.getResults() != null && !data.getResults().isEmpty()) {
                         reviewAdapter.setItems(data.getResults());
@@ -223,32 +223,32 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     }
 
     private void setupView() {
-        titleTV.setText(movie.getTitle());
-        voteRB.setRating((float) (movie.getVoteAverage() / 2));
-        viewsTV.setText(String.valueOf(movie.getPopularity()));
-        languageTV.setText(movie.getLanguage());
-        adultTV.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-        overviewTV.setText(movie.getOverview());
+        titleTextView.setText(movie.getTitle());
+        voteRatingBar.setRating((float) (movie.getVoteAverage() / 2));
+        viewsTextView.setText(String.valueOf(movie.getPopularity()));
+        languageTextView.setText(movie.getLanguage());
+        adultTextView.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
+        overviewTextView.setText(movie.getOverview());
         if (movie.getReleaseDate() != null) {
-            dateTV.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
+            dateTextView.setText(DATE_FORMATTER.format(movie.getReleaseDate()));
         }
         PicassoHelper.loadImage(this,
                 TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                posterIV, R.mipmap.movie_background, R.mipmap.error_background);
+                posterImageView, R.mipmap.movie_background, R.mipmap.error_background);
 
         videoAdapter = new VideoAdapter(null, this);
-        videosRV.setLayoutManager(new LinearLayoutManager(
+        videosRecyclerView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.HORIZONTAL, false));
-        videosRV.setAdapter(videoAdapter);
+        videosRecyclerView.setAdapter(videoAdapter);
 
         reviewAdapter = new ReviewAdapter();
-        reviewsRV.setLayoutManager(new LinearLayoutManager(
+        reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(
                 this, LinearLayoutManager.VERTICAL, false));
-        reviewsRV.setAdapter(reviewAdapter);
-        reviewsRV.setNestedScrollingEnabled(false);
-        reviewsRV.setHasFixedSize(false);
-        reviewsRV.addItemDecoration(
-                new DividerItemDecoration(reviewsRV.getContext(), LinearLayoutManager.VERTICAL));
+        reviewsRecyclerView.setAdapter(reviewAdapter);
+        reviewsRecyclerView.setNestedScrollingEnabled(false);
+        reviewsRecyclerView.setHasFixedSize(false);
+        reviewsRecyclerView.addItemDecoration(
+                new DividerItemDecoration(reviewsRecyclerView.getContext(), LinearLayoutManager.VERTICAL));
     }
 
     @Override
@@ -364,26 +364,34 @@ public class DetailsActivity extends BaseActivity implements VideoAdapter.OnVide
     @SuppressWarnings("ConstantConditions")
     @OnClick(R.id.details_video_error_layout)
     void requestVideos() {
-        Bundle queryBundle = new Bundle();
-        queryBundle.putInt(VideoLoader.BUNDLE_ID, movie.getMovieId());
-        LoaderManager loaderManager = getSupportLoaderManager();
-        if (loaderManager.getLoader(VideoLoader.LOADER_ID) == null) {
-            loaderManager.initLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
+        if (isDeviceConnected()) {
+            Bundle queryBundle = new Bundle();
+            queryBundle.putInt(VideoLoader.BUNDLE_ID, movie.getMovieId());
+            LoaderManager loaderManager = getSupportLoaderManager();
+            if (loaderManager.getLoader(VideoLoader.LOADER_ID) == null) {
+                loaderManager.initLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
+            } else {
+                loaderManager.restartLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
+            }
         } else {
-            loaderManager.restartLoader(VideoLoader.LOADER_ID, queryBundle, videoLoaderCallback);
+            setErrorLayout(R.id.details_video_error_layout, videoAdapter.isEmpty());
         }
     }
 
     @SuppressWarnings("ConstantConditions")
     @OnClick(R.id.details_review_error_layout)
     void requestReviews() {
-        Bundle queryBundle = new Bundle();
-        queryBundle.putInt(ReviewLoader.BUNDLE_ID, movie.getMovieId());
-        LoaderManager loaderManager = getSupportLoaderManager();
-        if (loaderManager.getLoader(ReviewLoader.LOADER_ID) == null) {
-            loaderManager.initLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
+        if (isDeviceConnected()) {
+            Bundle queryBundle = new Bundle();
+            queryBundle.putInt(ReviewLoader.BUNDLE_ID, movie.getMovieId());
+            LoaderManager loaderManager = getSupportLoaderManager();
+            if (loaderManager.getLoader(ReviewLoader.LOADER_ID) == null) {
+                loaderManager.initLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
+            } else {
+                loaderManager.restartLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
+            }
         } else {
-            loaderManager.restartLoader(ReviewLoader.LOADER_ID, queryBundle, reviewLoaderCallback);
+            setErrorLayout(R.id.details_review_error_layout, reviewAdapter.isEmpty());
         }
     }
 

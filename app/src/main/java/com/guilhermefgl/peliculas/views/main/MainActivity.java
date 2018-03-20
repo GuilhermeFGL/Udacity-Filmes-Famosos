@@ -48,18 +48,18 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
     @BindView(R.id.main_progress_bar)
-    ProgressBar connectingPB;
+    ProgressBar connectingProgressBar;
     @BindView(R.id.main_swipe)
-    SwipeRefreshLayout mainSR;
+    SwipeRefreshLayout mainSwipeRefreshLayout;
     @BindView(R.id.main_list)
-    RecyclerView mainRV;
+    RecyclerView movieRecyclerView;
     @BindView(R.id.error_conection_layout)
-    LinearLayout errorConnectionLL;
+    LinearLayout errorConnectionLayout;
     @BindView(R.id.main_navigation)
-    BottomBar navigationBB;
+    BottomBar navigationBottomBar;
 
     private MainAdapter mainAdapter;
-    private Snackbar errorSB;
+    private Snackbar errorSnackbar;
     private Integer currentOrder;
 
     private final String STATE_MOVIES = MovieResponse.class.getName();
@@ -81,16 +81,16 @@ public class MainActivity extends BaseActivity
         int spanCount = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT ?
                 MainAdapter.GRID_PORTRAIT : MainAdapter.GRID_LANDSCAPE;
-        mainRV.setLayoutManager(new GridLayoutManager(this, spanCount));
-        mainAdapter = new MainAdapter(mainRV, spanCount, this, this);
-        mainRV.setAdapter(mainAdapter);
+        movieRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
+        mainAdapter = new MainAdapter(movieRecyclerView, spanCount, this, this);
+        movieRecyclerView.setAdapter(mainAdapter);
 
-        mainSR.setColorSchemeColors(getResources().getColor(R.color.accent));
-        mainSR.setOnRefreshListener(this);
+        mainSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.accent));
+        mainSwipeRefreshLayout.setOnRefreshListener(this);
 
-        navigationBB.setOnTabSelectListener(this);
+        navigationBottomBar.setOnTabSelectListener(this);
 
-        errorSB = SnackBarHelper.make(this,
+        errorSnackbar = SnackBarHelper.make(this,
                 findViewById(R.id.main_navigation),
                 R.string.error_connection_label,
                 Snackbar.LENGTH_INDEFINITE)
@@ -212,8 +212,8 @@ public class MainActivity extends BaseActivity
                 setTotalPages(TheMovieDBService.LISTING_FIRST_PAGE);
                 setResults(movies);
             }});
-            errorConnectionLL.setVisibility(View.GONE);
-            mainRV.setVisibility(View.VISIBLE);
+            errorConnectionLayout.setVisibility(View.GONE);
+            movieRecyclerView.setVisibility(View.VISIBLE);
         }
 
         if (currentOrder == R.id.menu_main_favorite) {
@@ -222,35 +222,32 @@ public class MainActivity extends BaseActivity
     }
 
     private boolean isRequesting() {
-        return connectingPB.getVisibility() == View.VISIBLE;
+        return connectingProgressBar.getVisibility() == View.VISIBLE;
     }
 
     private void startRequest() {
-        connectingPB.setVisibility(View.VISIBLE);
+        connectingProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void endRequest() {
-        mainSR.setRefreshing(false);
-        connectingPB.setVisibility(View.GONE);
+        mainSwipeRefreshLayout.setRefreshing(false);
+        connectingProgressBar.setVisibility(View.GONE);
         mainAdapter.setFinishLoading();
-        if (errorSB.isShown()) {
-            errorSB.dismiss();
-        }
     }
 
     private void setErrorLayout(boolean hasError) {
         if (hasError) {
             if (!mainAdapter.isEmpty()) {
-                errorSB.show();
+                errorSnackbar.show();
             } else {
-                errorConnectionLL.setVisibility(View.VISIBLE);
-                mainRV.setVisibility(View.GONE);
+                errorConnectionLayout.setVisibility(View.VISIBLE);
+                movieRecyclerView.setVisibility(View.GONE);
             }
         } else {
-            errorConnectionLL.setVisibility(View.GONE);
-            mainRV.setVisibility(View.VISIBLE);
-            if (errorSB.isShown()) {
-                errorSB.dismiss();
+            errorConnectionLayout.setVisibility(View.GONE);
+            movieRecyclerView.setVisibility(View.VISIBLE);
+            if (errorSnackbar.isShown()) {
+                errorSnackbar.dismiss();
             }
         }
     }
@@ -263,7 +260,7 @@ public class MainActivity extends BaseActivity
                     new LocalStorageReader.MovieParams(this, order));
         }
 
-        if (!order.equals(TheMovieDBService.ORDER_FAVORITE)) {
+        if (!order.equals(TheMovieDBService.ORDER_FAVORITE) && isDeviceConnected()) {
             Bundle queryBundle = new Bundle();
             queryBundle.putInt(MovieLoader.BUNDLE_PAGE, page);
             queryBundle.putString(MovieLoader.BUNDLE_ORDER, order);

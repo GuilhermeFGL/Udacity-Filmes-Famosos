@@ -56,9 +56,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     class ReviewViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.item_review_author)
-        TextView authorTV;
+        TextView authorTextView;
         @BindView(R.id.item_review_content)
-        TextView contentTV;
+        TextView contentTextView;
 
         ReviewViewHolder(View itemView) {
             super(itemView);
@@ -66,8 +66,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
 
         void bind(Review review) {
-            authorTV.setText(review.getAuthor());
-            contentTV.setText(review.getContent());
+            authorTextView.setText(review.getAuthor());
+            contentTextView.setText(review.getContent());
         }
     }
 }
