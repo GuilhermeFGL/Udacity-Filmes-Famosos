@@ -18,6 +18,8 @@
     <TextView
         android:id="@+id/item_video_title"
         android:layout_below="@+id/item_video_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         tool:text="Trailer #N"
         style="Style/TextSecondaryItalic" />
 

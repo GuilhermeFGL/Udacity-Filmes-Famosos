@@ -218,6 +218,9 @@ public class MainActivity extends BaseActivity
 
         if (currentOrder == R.id.menu_main_favorite) {
             endRequest();
+            if (errorSnackbar.isShown()) {
+                errorSnackbar.dismiss();
+            }
         }
     }
 
@@ -237,9 +240,8 @@ public class MainActivity extends BaseActivity
 
     private void setErrorLayout(boolean hasError) {
         if (hasError) {
-            if (!mainAdapter.isEmpty()) {
-                errorSnackbar.show();
-            } else {
+            errorSnackbar.show();
+            if (mainAdapter.isEmpty()) {
                 errorConnectionLayout.setVisibility(View.VISIBLE);
                 movieRecyclerView.setVisibility(View.GONE);
             }
@@ -260,7 +262,11 @@ public class MainActivity extends BaseActivity
                     new LocalStorageReader.MovieParams(this, order));
         }
 
-        if (!order.equals(TheMovieDBService.ORDER_FAVORITE) && isDeviceConnected()) {
+        if (order.equals(TheMovieDBService.ORDER_FAVORITE)) {
+            return;
+        }
+
+        if (isDeviceConnected()) {
             Bundle queryBundle = new Bundle();
             queryBundle.putInt(MovieLoader.BUNDLE_PAGE, page);
             queryBundle.putString(MovieLoader.BUNDLE_ORDER, order);
@@ -270,6 +276,8 @@ public class MainActivity extends BaseActivity
             } else {
                 loaderManager.restartLoader(MovieLoader.LOADER_ID, queryBundle, this);
             }
+        } else {
+            setErrorLayout(true);
         }
     }
 
