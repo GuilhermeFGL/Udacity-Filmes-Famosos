@@ -17,7 +17,6 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class MovieTest {
 
-
     @Test
     public void testCreateFromCursor() {
         String[] movieColumns = {
@@ -68,6 +67,18 @@ public class MovieTest {
 
         assertThat("Error: movie builded wrong (0)", movies.get(0).getTitle(), is("title 1"));
         assertThat("Error: movie builded wrong (1)", movies.get(1).getTitle(), is("title 2"));
+
+        Movie movie1 = movies.get(0);
+        assertThat(movie1.getMovieId(), is(1));
+        assertThat(movie1.getTitle(), is("title 1"));
+        assertThat(movie1.getOverview(), is("overview"));
+        assertThat(movie1.getLanguage(), is("language"));
+        assertThat(movie1.getVoteCount(), is(1));
+        assertThat(movie1.getVoteAverage(), is(1.));
+        assertThat(movie1.getPopularity(), is(1.));
+        assertThat(movie1.getPosterPath(), is("poster_path"));
+        assertThat(movie1.hasVideo(), is(true));
+        assertThat(movie1.isAdult(), is(true));
     }
 
 }

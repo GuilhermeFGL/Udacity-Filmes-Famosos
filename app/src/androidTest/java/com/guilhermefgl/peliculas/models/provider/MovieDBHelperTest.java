@@ -17,6 +17,8 @@ import java.util.Date;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class MovieDBHelperTest {
@@ -86,12 +88,17 @@ public class MovieDBHelperTest {
         ContentValues contentValue =
                 MovieDBHelper.buildContentValue(movies.get(0), TheMovieDBService.ORDER_FAVORITE);
         assertNotNull(contentValue);
-        assertEquals("Error: wrong content values builder",
-                "title 1",
-                contentValue.getAsString(MovieContract.MovieEntry.COLUMN_TITLE));
-        assertEquals("Error: wrong content values builder",
-                TheMovieDBService.ORDER_FAVORITE,
-                contentValue.getAsString(MovieContract.MovieEntry.COLUMN_ORDER));
+        assertThat(contentValue.getAsInteger(MovieContract.MovieEntry.COLUMN_API_ID), is(1));
+        assertThat(contentValue.getAsString(MovieContract.MovieEntry.COLUMN_TITLE), is("title 1"));
+        assertThat(contentValue.getAsString(MovieContract.MovieEntry.COLUMN_OVERVIEW), is("overview"));
+        assertThat(contentValue.getAsString(MovieContract.MovieEntry.COLUMN_LANGUAGE), is("language"));
+        assertThat(contentValue.getAsInteger(MovieContract.MovieEntry.COLUMN_VOTE_COUNT), is(1));
+        assertThat(contentValue.getAsDouble(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE), is(1.));
+        assertThat(contentValue.getAsDouble(MovieContract.MovieEntry.COLUMN_POPULARITY), is(1.));
+        assertThat(contentValue.getAsString(MovieContract.MovieEntry.COLUMN_POSTER), is("poster/path"));
+        assertThat(contentValue.getAsInteger(MovieContract.MovieEntry.COLUMN_VIDEO), is(1));
+        assertThat(contentValue.getAsInteger(MovieContract.MovieEntry.COLUMN_ADULT), is(1));
+        assertThat(contentValue.getAsString(MovieContract.MovieEntry.COLUMN_ORDER), is(TheMovieDBService.ORDER_FAVORITE));
 
         ContentValues[] contentValues =
                 MovieDBHelper.buildContentValues(movies, TheMovieDBService.ORDER_FAVORITE);
