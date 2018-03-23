@@ -31,11 +31,12 @@ public final class TheMovieDBService {
     private static final String IMAGE_YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
     private static final String IMAGE_YOUTUBE_THUMBNAIL_BASE_URL = "https://img.youtube.com/vi/%s/0.jpg";
     private static final String WEB_URL = "https://www.themoviedb.org/movie/";
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String RESPONSE_DATE_FORMAT = "yyyy-MM-dd";
     public static final String ORDER_POPULAR = "popular";
     public static final String ORDER_TOP_RATED = "top_rated";
     public static final String ORDER_FAVORITE = "favorite";
     public static final int LISTING_FIRST_PAGE = 1;
+    public static final int TOP_RATING_COUNT = 10;
 
     private static final OkHttpClient httpClient;
     private static final Gson gson;
@@ -58,7 +59,7 @@ public final class TheMovieDBService {
     }
     static {
          gson = new GsonBuilder()
-                .setDateFormat(DATE_FORMAT)
+                .setDateFormat(RESPONSE_DATE_FORMAT)
                 .create();
     }
 

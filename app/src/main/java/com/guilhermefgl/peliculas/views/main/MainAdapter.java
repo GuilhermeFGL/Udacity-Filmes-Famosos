@@ -168,11 +168,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.item_movie_title)
-        TextView itemTitleTV;
+        TextView itemTitleTextView;
         @BindView(R.id.item_movie_ratio)
-        RatingBar itemAverageRB;
+        RatingBar itemAverageRatingBar;
         @BindView(R.id.item_movie_thumbnail)
-        ImageView itemThumbnailIV;
+        ImageView itemThumbnailImageView;
 
         private final View view;
         private Movie movie;
@@ -185,17 +185,17 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void bind(Movie movie) {
             this.movie = movie;
-            itemTitleTV.setText(movie.getTitle());
-            itemAverageRB.setRating((float) (movie.getVoteAverage() / 10));
+            itemTitleTextView.setText(movie.getTitle());
+            itemAverageRatingBar.setRating((float) (movie.getVoteAverage() / TheMovieDBService.TOP_RATING_COUNT));
             PicassoHelper.loadImage(view.getContext(),
                     TheMovieDBService.buildImageURL(movie.getPosterPath()),
-                    itemThumbnailIV, R.mipmap.movie_background, R.mipmap.error_background);
+                    itemThumbnailImageView, R.mipmap.movie_background, R.mipmap.error_background);
             view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onMovieItemClick.onMovieItemClick(movie, itemThumbnailIV);
+            onMovieItemClick.onMovieItemClick(movie, itemThumbnailImageView);
         }
     }
 

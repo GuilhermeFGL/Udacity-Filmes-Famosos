@@ -40,4 +40,13 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="TextSecondary" parent="AppTheme">
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="TextSecondaryItalic" parent="TextSecondary">
+        <item name="android:textStyle">italic</item>
+    </style>
+
 </resources>

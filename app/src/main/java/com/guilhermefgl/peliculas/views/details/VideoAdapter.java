@@ -65,9 +65,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.item_video_thumbnail)
-        ImageView itemThumbnailIV;
+        ImageView itemThumbnailImageView;
         @BindView(R.id.item_video_title)
-        TextView itemTitleTV;
+        TextView itemTitleTextView;
 
         private View view;
         private Video video;
@@ -80,10 +80,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         void bind(Video video) {
             this.video = video;
-            itemTitleTV.setText(video.getTitle());
+            itemTitleTextView.setText(video.getTitle());
             PicassoHelper.loadImage(view.getContext(),
                     TheMovieDBService.buildYoutubeThumbnailUrl(video.getKey()),
-                    itemThumbnailIV,
+                    itemThumbnailImageView,
                     R.mipmap.youtube_thumbnail_background,
                     R.mipmap.youtube_thumbnail_background);
             view.setOnClickListener(this);

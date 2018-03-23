@@ -82,27 +82,26 @@
 
         <TextView
             android:id="@+id/details_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_below="@+id/details_date_label"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/secondary_text" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextSecondary"/>
 
         <TextView
             android:id="@+id/details_overview_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/details_date"
+            android:layout_marginTop="8dp"
             android:text="@string/details_overview_label" />
 
         <TextView
             android:id="@+id/details_overview"
+            android:layout_below="@+id/details_overview_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/details_overview_label"
-            android:textColor="@color/secondary_text"
-            android:textSize="13sp"
-            tools:text="@string/lore" />
+            tools:text="@string/lore"
+            style="@style/TextSecondary"/>
 
         <View
             android:id="@+id/details_divider_1"
@@ -115,18 +114,18 @@
 
         <include
             android:id="@+id/details_videos_layout"
-            layout="@layout/layout_details_video_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/details_divider_1" />
+            android:layout_below="@+id/details_divider_1"
+            layout="@layout/layout_details_video_list" />
 
         <include
             android:id="@+id/details_reviews_layout"
-            layout="@layout/layout_details_review_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_below="@+id/details_videos_layout" />
+            android:layout_below="@+id/details_videos_layout"
+            layout="@layout/layout_details_review_list" />
 
     </RelativeLayout>
 
